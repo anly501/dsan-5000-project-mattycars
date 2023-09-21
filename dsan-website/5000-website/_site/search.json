@@ -1,10 +1,17 @@
 [
   {
+    "objectID": "clustering/clustering.html",
+    "href": "clustering/clustering.html",
+    "title": "Clustering",
+    "section": "",
+    "text": "Build out your website tab for “clustering”"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "DSAN-5000: Introduction",
+    "title": "Home",
     "section": "",
-    "text": "See the following link for more information about the author: about me\nThis is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\nHIGHLY RECOMMENDED\n\nIt is highly recommended that you build your website using .ipynb files and NOT .qmdfiles\nFunctionally the two formats are basically identical, i.e. they are just Markdown + Code\nHowever there is ONE MAJOR DIFFERENCE, i.e. .ipynb stores the code outputs in the meta-data of the file\n\nThis means you ONLY HAVE TO RUN THE CODE ONCE with .ipynb\n.qmd will run the code every time you build the website, which can be very slow\n\nThere are caching options for .qmd, however, they are “messier” that just using .ipynb\n\nNote: .qmd is fine if there is no code, in which case it is basically just a Markdown file\n\nConverting between the two\n\nYou can switch between the two formats using\nquarto convert clustering.qmd this will output a .ipynb version called clustering.ipynb\nquarto convert eda.ipynb this will output a .qmd version called eda.qmd\n\nYOU CAN RUN R CODE IN VSC WITH .ipynb, see the following link\n\nhttps://saturncloud.io/blog/how-to-use-jupyter-r-kernel-with-visual-studio-code/\n\nIt is possible, but NOT RECOMMENDED, to mix Python and R code in the same file\n\nIMPORTANT ASIDE\n\nA .ipynb file is simply a JSON file with a specialized structural format\nYou can see this by running more eda/eda.ipynb from the command line\nWhich will output the following;\n\n\nTIP FOR MAC USERS\n\ncommand+control+shift+4 is very useful on a mac.\n\nIt takes a screenshot and saves it to the clip-board\n\nThe following VSC extension allows you to paste images from the clip-board with alt+command+v.\n\ntab is your best friend when using the command line, since it does auto-completion\nopen ./path_to_file will open any file or directory from the command line"
+    "text": "See the following link for more information about the author: About Me\nThis page will serve as a page that hosts the abstract to this project and as a navigation resource.\nThis is a Quarto website."
   },
   {
     "objectID": "eda/eda.html",
@@ -28,10 +35,73 @@
     "text": "Basic visualization\n\n\n# Create a visualization\nsns.relplot(\n    data=tips,\n    x=\"total_bill\", y=\"tip\", col=\"time\",\n    hue=\"smoker\", style=\"smoker\", size=\"size\",\n)\n\nplt.show()"
   },
   {
-    "objectID": "clustering/clustering.html",
-    "href": "clustering/clustering.html",
-    "title": "Clustering",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Matt",
     "section": "",
-    "text": "Build out your website tab for “clustering”"
+    "text": "“Me Skydiving in West Point, VA April 2023\n\n\n\n\n\n\n\n“75 Feet Under the Ocean in Captain Cook, Hawaii June 2022\n\n\n\n\n\n\n\n“Recovering My Phone After Dropping it Off a Ski Lift in Whistler, BC, Canada January 2023\n\n\n\n\n\nMatt Carswell is currently a first year graduate student in the Data Science and Analytics program at Georgetown University. He concurrently works part-time as a Market Research and Data Analyst at Weris Inc. where he works closely with the Department of Transporation (USDOT) and the Bureau of Transportation Statistics (BTS) as a Data Consultant. One of his most recent projects includes developing a Work Plan for BTS that outlines data and data analysis tools the federal government can provide to local decision-makers that would aid their transportation infrastruce decisions. This report, Work Plan to Provide Federal Support for Local Decision-making, was reviewed by both the Secretary of Transportaion and by members of Congress.\nMatt graduated in 2022 from the University of Virginia with a BA in Statistics with a concentration in Econometrics and a minor in Economics. Some of his interests include behavioral finance, impact investing, game theory, and leveraging data/statistics in sports handicapping. He intends on graduating at the end of Fall 2024 and find a job in either the impact investing space or sports industry. His lifelong ambition is to create Artifical Intelligence that can produce succesful predicition for any sports handicapping market.\n\n\n\n\n\n\nMS in Data Science and Analytics\nAttending on a Merit Scholarship\nNotable Classes: Data Science and Analytics, Probability/Statistical Computing, Data Science for a Changing Climate\n\n\n\nGPA: 3.6\nBA in Statistics (conc. Econometrics) and a minor in Economics\nNotable Classes: Statistical Machine Learning, Applied Time Series, Behavioral Finance\n\n\n\n\n\nStatistics, Economics, Machine Learning, Impact Investing, Sports Handicapping, Predictive Analytics\n\n\n\nMarathon running, Cooking, SCUBA diving, Snowboarding, Skateboarding, Rap and House Music\n\n\n\n\nLinkedIn\nGitHub"
+  },
+  {
+    "objectID": "about.html#introduction",
+    "href": "about.html#introduction",
+    "title": "About Matt",
+    "section": "",
+    "text": "Matt Carswell is currently a first year graduate student in the Data Science and Analytics program at Georgetown University. He concurrently works part-time as a Market Research and Data Analyst at Weris Inc. where he works closely with the Department of Transporation (USDOT) and the Bureau of Transportation Statistics (BTS) as a Data Consultant. One of his most recent projects includes developing a Work Plan for BTS that outlines data and data analysis tools the federal government can provide to local decision-makers that would aid their transportation infrastruce decisions. This report, Work Plan to Provide Federal Support for Local Decision-making, was reviewed by both the Secretary of Transportaion and by members of Congress.\nMatt graduated in 2022 from the University of Virginia with a BA in Statistics with a concentration in Econometrics and a minor in Economics. Some of his interests include behavioral finance, impact investing, game theory, and leveraging data/statistics in sports handicapping. He intends on graduating at the end of Fall 2024 and find a job in either the impact investing space or sports industry. His lifelong ambition is to create Artifical Intelligence that can produce succesful predicition for any sports handicapping market."
+  },
+  {
+    "objectID": "about.html#a-glimpse-into-my-life",
+    "href": "about.html#a-glimpse-into-my-life",
+    "title": "About Me",
+    "section": "",
+    "text": "“Me Skydiving in West Point, VA April 2023"
+  },
+  {
+    "objectID": "about.html#a-picture-is-worth-a-thousand-words",
+    "href": "about.html#a-picture-is-worth-a-thousand-words",
+    "title": "About Matt",
+    "section": "",
+    "text": "“Me Skydiving in West Point, VA April 2023\n\n\n\n\n\n\n\n“75 Feet Under the Ocean in Captain Cook, Hawaii June 2022\n\n\n\n\n\n\n\n“Recovering My Phone After Dropping it Off a Ski Lift in Whistler, BC, Canada January 2023"
+  },
+  {
+    "objectID": "about.html#academica-and-professional-interests",
+    "href": "about.html#academica-and-professional-interests",
+    "title": "About Me",
+    "section": "",
+    "text": "Statistics, Economics, Machine Learning, Impact Investing, Sports Handicapping, Predictive Analytics"
+  },
+  {
+    "objectID": "about.html#hobbies",
+    "href": "about.html#hobbies",
+    "title": "About Matt",
+    "section": "",
+    "text": "Marathon running, Cooking, SCUBA diving, Snowboarding, Skateboarding, Rap and House Music"
+  },
+  {
+    "objectID": "about.html#hobbies-1",
+    "href": "about.html#hobbies-1",
+    "title": "About Me",
+    "section": "Hobbies",
+    "text": "Hobbies\nMarathon running, Cooking, SCUBA diving, Snowboarding, Skating, Rap and House Music"
+  },
+  {
+    "objectID": "about.html#academic-and-professional-interests",
+    "href": "about.html#academic-and-professional-interests",
+    "title": "About Matt",
+    "section": "",
+    "text": "Statistics, Economics, Machine Learning, Impact Investing, Sports Handicapping, Predictive Analytics"
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "About Matt",
+    "section": "",
+    "text": "MS in Data Science and Analytics\nAttending on a Merit Scholarship\nNotable Classes: Data Science and Analytics, Probability/Statistical Computing, Data Science for a Changing Climate\n\n\n\nGPA: 3.6\nBA in Statistics (conc. Econometrics) and a minor in Economics\nNotable Classes: Statistical Machine Learning, Applied Time Series, Behavioral Finance"
+  },
+  {
+    "objectID": "about.html#socials",
+    "href": "about.html#socials",
+    "title": "About Matt",
+    "section": "",
+    "text": "LinkedIn\nGitHub"
   }
 ]

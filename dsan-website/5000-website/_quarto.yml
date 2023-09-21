@@ -6,11 +6,32 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Home
-      - href: clustering/clustering.qmd
-        text: Clustering
+      - href: about.ipynb
+        text: About
+      - href: introduction/introduction.ipynb
+        text: Introduction
+      - href: https://github.com/anly501/dsan-5000-project-mattycars
+        text: Code
+      - href: https://github.com/anly501/dsan-5000-project-mattycars/tree/main/data
+        text: Data
+      - href: gathering/gathering.ipynb
+        text: Data Gathering
+      - href: cleaning/cleaning.ipynb
+        text: Data Cleaning
       - href: eda/eda.ipynb
         text: Data Exploration
+      - href: clustering/clustering.qmd
+        text: Clustering
+      - href: dimensionality/dimensionality.ipynb
+        text: Dimesionality Reduction
+      - href: ARM/ARM.ipynb
+        text: ARM
+      - text: Decision Trees
+        menu: 
+          - trees/classification.ipynb
+          - trees/regression.ipynb
+      - href: conclusions/conclusions.ipynb
+        text: Conclusions
 format:
   html:
     theme: cosmo
