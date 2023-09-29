@@ -16,8 +16,10 @@ website:
         text: Data
       - href: gathering/gathering.ipynb
         text: Data Gathering
-      - href: cleaning/cleaning.ipynb
-        text: Data Cleaning
+      - text: Data Cleaning
+        menu: 
+          - cleaning/cleaning.rmd
+          - cleaning/text.ipynb
       - href: eda/eda.ipynb
         text: Data Exploration
       - href: clustering/clustering.qmd

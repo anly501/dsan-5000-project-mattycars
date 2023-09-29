@@ -104,10 +104,21 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link active" href="../gathering/gathering.html" rel="" target="" aria-current="page">
  <span class="menu-text">Data Gathering</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../cleaning/cleaning.html" rel="" target="">
- <span class="menu-text">Data Cleaning</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data-cleaning" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Data Cleaning</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-data-cleaning">    
+        <li>
+    <a class="dropdown-item" href="../cleaning/cleaning.html" rel="" target="">
+ <span class="dropdown-text">Data Cleaning</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../cleaning/text.html" rel="" target="">
+ <span class="dropdown-text">Text Data Cleaning</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="../eda/eda.html" rel="" target="">
  <span class="menu-text">Data Exploration</span></a>
@@ -155,7 +166,13 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-source" id="toc-data-source" class="nav-link active" data-scroll-target="#data-source">Data Source</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -177,8 +194,19 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<p>I will add way more description in the future. For now, this section is just laying down the groundwork.</p>
+<section id="data-source" class="level2">
+<h2 class="anchored" data-anchor-id="data-source">Data Source</h2>
+<p>While the HKJC offers publicly available data, it is immensely hard to scrape off the web. This was orginally attempted for this project (for, admittedly, too long of a period of a time), but it requires writing code to solve logic and math games set up by the HJKC. They do not mind people using their data, but they do no want an oversaturation of users using their data. There are many companies that offer up-to-date HJKC data for a monthly subscription, but this is, obviously, not worthwhile for this project. Outside of this paid data and running an extremely complicated API (that is often very sensitive to breaking day-to-day), there is an extremely limited pool of data that is free and easy-to-use.</p>
+<p>Upon scouring the web, I (almost accidentally) stumbled upon a user on GitHub by the username eprochasson who actually used to manage a public, web scraper for Hong Kong and Singapore horse racing. The user has not updated the data obtained from this scraper since 2019, but due to horse racing not really changing as a sport year-to-year (unlike sports like basketball, baseball, etc.), the receny of this data is more than suffcient for this project. The GitHub containing all this data can be found <a href="https://github.com/eprochasson/horserace_data/tree/master">here</a>.</p>
+<p>On this GitHub site, there are 6 different datasets that can accessed: dividends, horses, live_odds, performances, races, and sectional times. The divideneds and live odds datasets will be not be focused on in this project. Horses and performances will serve as the main sources of data for this project. The data dates backs all the way back to the early 1990s and goes through the middle of 2018. The horses dataset contains information on every horse that is raced in Hong Kong and Singapore, including information about their owners, jockey, its dame and sire (mother and father), and siblings. There are over 20,0000 observations (horses) in this dataset. There are overall 26 features in this dataset.</p>
+<p>A screenshot of the horses csv file (once it is unzipped from the gz file), can be found below: <img src="../images/horses.png" class="img-fluid" alt="Horses"></p>
+<p>The performances dataset captures every single performance by each of the horses in the horses dataset. Because of this relationship between the datasets, there are almost 400,000 observations in this datset. The datset captures 26 features, including the placement of the horse in the race, its starting draw, and data relating to how it ran all 4 sections of the track.</p>
+<p>A screenshot of the performances csv file (once it is unzipped from the gz file), can be found below: <img src="../images/performances.png" class="img-fluid" alt="Performances"></p>
+<p>Again, more of a description of the features of all these datasets will be discussed upon further completion of this web page.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

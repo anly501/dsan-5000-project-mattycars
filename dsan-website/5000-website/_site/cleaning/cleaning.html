@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>DSAN-5000: Project - Data Cleaning</title>
+<title>DSAN-5000: Project – cleaning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -104,10 +138,21 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="../gathering/gathering.html" rel="" target="">
  <span class="menu-text">Data Gathering</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link active" href="../cleaning/cleaning.html" rel="" target="" aria-current="page">
- <span class="menu-text">Data Cleaning</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data-cleaning" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Data Cleaning</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-data-cleaning">    
+        <li>
+    <a class="dropdown-item" href="../cleaning/cleaning.html" rel="" target="">
+ <span class="dropdown-text">Data Cleaning</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../cleaning/text.html" rel="" target="">
+ <span class="dropdown-text">Text Data Cleaning</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="../eda/eda.html" rel="" target="">
  <span class="menu-text">Data Exploration</span></a>
@@ -155,30 +200,246 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link active" data-scroll-target="#data-cleaning">Data Cleaning</a>
+  <ul class="collapse">
+  <li><a href="#lets-start-by-cleaning-horses" id="toc-lets-start-by-cleaning-horses" class="nav-link" data-scroll-target="#lets-start-by-cleaning-horses">Let’s start by cleaning horses:</a></li>
+  <li><a href="#now-lets-clean-performances" id="toc-now-lets-clean-performances" class="nav-link" data-scroll-target="#now-lets-clean-performances">Now let’s clean Performances</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Data Cleaning</h1>
+
+
+<section id="data-cleaning" class="level1">
+<h1>Data Cleaning</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>horses<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"../../../data/00-raw-data/horses.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>performances<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"../../../data/00-raw-data/performances.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="lets-start-by-cleaning-horses" class="level2">
+<h2 class="anchored" data-anchor-id="lets-start-by-cleaning-horses">Let’s start by cleaning horses:</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(horses,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  horse_id       horse_name horse_name_zh
+1     L247     REAL SUPREME      天外之天
+2    44170 LIM'S INVINCIBLE      林家无敌
+                                                                         horse_url
+1 http://racing.hkjc.com/racing/info/horse/GetFilteredHorseFormRecord/english/L247
+2          http://www.turfclub.com.sg/Racing/Pages/HorseProfile.aspx?HorseID=44170
+  horse_country is_active country age             trainer_id   colour     sex
+1            HK      TRUE     AUS   9                    CCW Chestnut Gelding
+2            SG      TRUE     AUS   3 STEVEN HAROLD BURRIDGE                 
+                 owner_name
+1 Lai Ni Jan | Benvinda Lai
+2              LIM'S STABLE
+                                            owner_link import_type
+1 ownersearch.asp?horseowner=Lai Ni Jan | Benvinda Lai         ISG
+2                                                                 
+  current_rating season_stake start_of_season_rating total_stake
+1             34        37800                     39     6607700
+2             50           NA                     NA       38182
+                   sire
+1           Flying Spur
+2 I AM INVINCIBLE (AUS)
+                                                                           same_sire_url
+1 http://racing.hkjc.com/racing/info/Horse/SameSire/english/Rmx5aW5nIFNwdXIgICAgICAgICA=
+2                                                                                       
+  no_of_1_2_3                 dam no_of_start_past_10_meetings dam_sire
+1    8-5-6-75           Irgunette                            1    Irgun
+2             REIGNING CASH (AUS)                           NA         
+                         same_sire last_updated
+1 ["T387", "M273", "T280", "V334"]      08:18.0
+2                                       11:32.8</code></pre>
+</div>
+</div>
+<p>We are going to remove “horse_name_zh” which contains the horses’ names in Cantonese, “horse_url”, “owner_url”, “sire”, “no_of_start_past_10_meetings”, “dam”,“dam_sire”, “same_sire and”last_updated”. <em>Note for grader: I will go into more depth why I am removing these in the future</em> completion of this project.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>horses.clean<span class="ot">&lt;-</span>horses[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">13</span>,<span class="dv">16</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">22</span>,<span class="dv">23</span>,<span class="dv">24</span>,<span class="dv">25</span>,<span class="dv">26</span>)]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(horses.clean,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  horse_id       horse_name horse_country is_active country age
+1     L247     REAL SUPREME            HK      TRUE     AUS   9
+2    44170 LIM'S INVINCIBLE            SG      TRUE     AUS   3
+              trainer_id   colour     sex                owner_name import_type
+1                    CCW Chestnut Gelding Lai Ni Jan | Benvinda Lai         ISG
+2 STEVEN HAROLD BURRIDGE                               LIM'S STABLE            
+  current_rating start_of_season_rating total_stake no_of_1_2_3
+1             34                     39     6607700    8-5-6-75
+2             50                     NA       38182            </code></pre>
+</div>
+</div>
+<p>We are only interested in horses that run in Hong Kong while there are some horses in this data set that raced in Singapore.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>horses.clean<span class="ot">&lt;-</span>horses.clean<span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(horse_country <span class="sc">==</span> <span class="st">"HK"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we want to clean “no_of_1_2_3”. This column represents how many 1st, 2nd, and 3rd place finishes the horse has ever had. The last number is the total number of races the horse has participated in. We are going to break up this column into seperate columns for placing finishes and number of races.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>split1 <span class="ot">&lt;-</span><span class="fu">str_split_fixed</span>(horses.clean<span class="sc">$</span>no_of_1_2_3, <span class="st">"-"</span>, <span class="dv">4</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>horses.clean<span class="sc">$</span>first_place <span class="ot">&lt;-</span> split1[,<span class="dv">1</span>]</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>horses.clean<span class="sc">$</span>second_place <span class="ot">&lt;-</span> split1[,<span class="dv">2</span>]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>horses.clean<span class="sc">$</span>third_place <span class="ot">&lt;-</span> split1[,<span class="dv">3</span>]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>horses.clean<span class="sc">$</span>races <span class="ot">&lt;-</span> split1[,<span class="dv">4</span>]</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove original column</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>horses.clean <span class="ot">&lt;-</span> horses.clean[,<span class="sc">-</span><span class="dv">15</span>]</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(horses.clean,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  horse_id     horse_name horse_country is_active country age trainer_id
+1     L247   REAL SUPREME            HK      TRUE     AUS   9        CCW
+2     T422 AMAZING MOMENT            HK      TRUE     AUS   6        OSP
+    colour     sex                owner_name import_type current_rating
+1 Chestnut Gelding Lai Ni Jan | Benvinda Lai         ISG             34
+2      Bay Gelding   Treinta Pares Syndicate          PP             60
+  start_of_season_rating total_stake first_place second_place third_place races
+1                     39     6607700           8            5           6    75
+2                     57     1337225           1            1           4    19</code></pre>
+</div>
+</div>
+</section>
+<section id="now-lets-clean-performances" class="level2">
+<h2 class="anchored" data-anchor-id="now-lets-clean-performances">Now let’s clean Performances</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(performances,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  horse_id horse_name horse_name_zh horse_no race_id race_no race_date
+1    34204  LORD GREG     LORD GREG       NA      NA       0   00:00.0
+2    34204  LORD GREG     LORD GREG       NA      NA       0   00:00.0
+  race_country final_placing    season going rating jockey_id jockey_name
+1           SG             3 2006/2007     G     37  O CHAVEZ    O CHAVEZ
+2           SG             2 2006/2007     G     37 B VORSTER   B VORSTER
+  jockey_name_zh
+1         查维斯
+2         沃斯特
+                                                                                    jockey_url
+1  http://www.turfclub.com.sg/Industry/Jockeys/Pages/JockeyDirectoryDetails.aspx?Name=O+CHAVEZ
+2 http://www.turfclub.com.sg/Industry/Jockeys/Pages/JockeyDirectoryDetails.aspx?Name=B+VORSTER
+  trainer_id trainer_name trainer_name_zh
+1   O CHAVEZ      L LAXON            纳逊
+2  B VORSTER      L LAXON            纳逊
+                                                                                          trainer_url
+1 http://www.turfclub.com.sg/Industry/Trainers/Pages/TrainerDirectoryDetails.aspx?TrainerName=L+LAXON
+2 http://www.turfclub.com.sg/Industry/Trainers/Pages/TrainerDirectoryDetails.aspx?TrainerName=L+LAXON
+  winning_odds actual_weight running_positions finish_time on_date_weight gears
+1          2.6          53.5             7 7 3     1:24:50            497     B
+2          2.4          54.0             4 3 2 0.076736111            500     B
+  draw length_behind_winner race_class distance course race_location race_url
+1    6                 6.8L          5     1400                    S         
+2    2                 3.8L          5     1800                    S         
+  track sections sections_time last_updated
+1  Turf                             00:41.5
+2  Turf                             00:41.5</code></pre>
+</div>
+</div>
+<p>We are going to remove the column containing the Cantonese name for the horse, the date (as the data became corrupted through the original API and it is not necessarily important when we have the year of the season and measurements of the track quality to account for weather seasonality impacts on the track), jockey name in Cantonese, jockey url, trainer name in Cantonese, trainer url, race url, and last updated, and length behind winner. Length behind winner being deleted is okay because we have LBW for all 4 sections in another variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="ot">&lt;-</span>performances[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">7</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">28</span>,<span class="dv">33</span>,<span class="dv">37</span>)]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(perf.clean,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  horse_id horse_name horse_no race_id race_no race_country final_placing
+1    34204  LORD GREG       NA      NA       0           SG             3
+2    34204  LORD GREG       NA      NA       0           SG             2
+     season going rating jockey_id jockey_name trainer_id trainer_name
+1 2006/2007     G     37  O CHAVEZ    O CHAVEZ   O CHAVEZ      L LAXON
+2 2006/2007     G     37 B VORSTER   B VORSTER  B VORSTER      L LAXON
+  winning_odds actual_weight running_positions finish_time on_date_weight gears
+1          2.6          53.5             7 7 3     1:24:50            497     B
+2          2.4          54.0             4 3 2 0.076736111            500     B
+  draw race_class distance course race_location track sections sections_time
+1    6          5     1400                    S  Turf                       
+2    2          5     1800                    S  Turf                       </code></pre>
+</div>
+</div>
+<p>We are going to once again filter out any race in the dataset that happened in Singapore.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="ot">&lt;-</span>perf.clean<span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(race_country <span class="sc">==</span> <span class="st">"HK"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now I am going to do one of the important parts of data cleaning for this analyis: Breaking the section data into 4 distinct columns, both for LBW and time.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Getting rid of brackets and commas in the columns</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections,<span class="st">"</span><span class="sc">\\</span><span class="st">[|</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">,|</span><span class="sc">\\</span><span class="st">{"</span>,<span class="st">""</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections,<span class="st">"</span><span class="sc">\\</span><span class="st">}"</span>,<span class="st">","</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections_time <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections_time,<span class="st">"</span><span class="sc">\\</span><span class="st">[|</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">,|</span><span class="sc">\\</span><span class="st">{"</span>,<span class="st">""</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections_time <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections_time,<span class="st">"</span><span class="sc">\\</span><span class="st">}"</span>,<span class="st">","</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># splitting each section into their own column</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>split2 <span class="ot">&lt;-</span><span class="fu">str_split_fixed</span>(perf.clean<span class="sc">$</span>sections,<span class="st">","</span>,<span class="dv">4</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section1<span class="ot">&lt;-</span>split2[,<span class="dv">1</span>]</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section2<span class="ot">&lt;-</span>split2[,<span class="dv">2</span>]</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section3<span class="ot">&lt;-</span>split2[,<span class="dv">3</span>]</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section4<span class="ot">&lt;-</span>split2[,<span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same thing for section time</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>split3 <span class="ot">&lt;-</span><span class="fu">str_split_fixed</span>(perf.clean<span class="sc">$</span>sections_time,<span class="st">","</span>,<span class="dv">4</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section1_time<span class="ot">&lt;-</span>split3[,<span class="dv">1</span>]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section2_time<span class="ot">&lt;-</span>split3[,<span class="dv">2</span>]</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section3_time<span class="ot">&lt;-</span>split3[,<span class="dv">3</span>]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section4_time<span class="ot">&lt;-</span>split3[,<span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(perf.clean,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  horse_id horse_name horse_no race_id race_no race_country final_placing
+1     A001 BURST AWAY        6     250       1           HK            11
+2     A001 BURST AWAY        6     313       6           HK            11
+     season going rating jockey_id jockey_name trainer_id trainer_name
+1 2016/2017     G     72        MG     G Mosse        MKL      K L Man
+2 2016/2017     G     72       YML   M L Yeung        MKL      K L Man
+  winning_odds actual_weight running_positions finish_time on_date_weight gears
+1           49           125            9 7 11     1.10.04           1083      
+2           30           124            4 3 11     1.11.86           1073      
+  draw race_class distance course race_location track
+1   13          3     1200      A            ST  Turf
+2    6          3     1200      A            HV  Turf
+                                                                                 sections
+1         "lbw": "5-1/4" "placing": 9, "lbw": "3" "placing": 7, "lbw": "4" "placing": 11,
+2 "lbw": "2-1/4" "placing": 4, "lbw": "1-1/2" "placing": 3, "lbw": "6-1/2" "placing": 11,
+                                       sections_time
+1 "time": "24.21", "time": "22.03", "time": "23.80",
+2 "time": "23.73", "time": "23.61", "time": "24.52",
+                     section1                     section2
+1 "lbw": "5-1/4" "placing": 9      "lbw": "3" "placing": 7
+2 "lbw": "2-1/4" "placing": 4  "lbw": "1-1/2" "placing": 3
+                       section3 section4   section1_time    section2_time
+1      "lbw": "4" "placing": 11          "time": "24.21"  "time": "22.03"
+2  "lbw": "6-1/2" "placing": 11          "time": "23.73"  "time": "23.61"
+     section3_time section4_time
+1  "time": "23.80"              
+2  "time": "24.52"              </code></pre>
+</div>
+</div>
+<p><em>Note for grader:Unfortunately, this part is really weird because of data loss, so this will have to be further cleaned later on, most likely with the help of a professor. You can see that I attempted to break up the data into the 4 sections of the track but it got a little finicky.</em></p>
 
 
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-</header>
-
-
-
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

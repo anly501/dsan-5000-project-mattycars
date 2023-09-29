@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>DSAN-5000: Project - Text Data Cleaning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">DSAN-5000: Project</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../introduction/introduction.html" rel="" target="">
+ <span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/anly501/dsan-5000-project-mattycars" rel="" target="">
+ <span class="menu-text">Code</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/anly501/dsan-5000-project-mattycars/tree/main/data" rel="" target="">
+ <span class="menu-text">Data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../gathering/gathering.html" rel="" target="">
+ <span class="menu-text">Data Gathering</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data-cleaning" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Data Cleaning</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-data-cleaning">    
+        <li>
+    <a class="dropdown-item" href="../cleaning/cleaning.html" rel="" target="">
+ <span class="dropdown-text">Data Cleaning</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../cleaning/text.html" rel="" target="">
+ <span class="dropdown-text">Text Data Cleaning</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../eda/eda.html" rel="" target="">
+ <span class="menu-text">Data Exploration</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../clustering/clustering.html" rel="" target="">
+ <span class="menu-text">Clustering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../dimensionality/dimensionality.html" rel="" target="">
+ <span class="menu-text">Dimesionality Reduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
+ <span class="menu-text">ARM</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-trees" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Decision Trees</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-trees">    
+        <li>
+    <a class="dropdown-item" href="../trees/classification.html" rel="" target="">
+ <span class="dropdown-text">Classification Trees</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../trees/regression.html" rel="" target="">
+ <span class="dropdown-text">Regression</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../conclusions/conclusions.html" rel="" target="">
+ <span class="menu-text">Conclusions</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setting-up-an-api-for-hkjc-racing-news" id="toc-setting-up-an-api-for-hkjc-racing-news" class="nav-link active" data-scroll-target="#setting-up-an-api-for-hkjc-racing-news">Setting up an API for HKJC Racing News</a></li>
+  <li><a href="#here-is-a-word-cloud-to-take-a-glimpse-into-the-text-data" id="toc-here-is-a-word-cloud-to-take-a-glimpse-into-the-text-data" class="nav-link" data-scroll-target="#here-is-a-word-cloud-to-take-a-glimpse-into-the-text-data">Here is a Word Cloud to take a glimpse into the text data</a></li>
+  <li><a href="#count-vectorizer" id="toc-count-vectorizer" class="nav-link" data-scroll-target="#count-vectorizer">Count Vectorizer</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Text Data Cleaning</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="setting-up-an-api-for-hkjc-racing-news" class="level2">
+<h2 class="anchored" data-anchor-id="setting-up-an-api-for-hkjc-racing-news">Setting up an API for HKJC Racing News</h2>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> CountVectorizer</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>baseURL <span class="op">=</span> <span class="st">"https://newsapi.org/v2/everything?"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>total_requests<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>verbose<span class="op">=</span><span class="va">True</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>API_KEY<span class="op">=</span><span class="st">'c42b8e84aab24c85af001b27015206b3'</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>TOPIC<span class="op">=</span><span class="st">'Hong Kong Jockey Club'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>URLpost <span class="op">=</span> {<span class="st">'apiKey'</span>: API_KEY,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>            <span class="st">'q'</span>: <span class="st">'+'</span><span class="op">+</span>TOPIC,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">'sortBy'</span>: <span class="st">'relevancy'</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">'totalRequests'</span>: <span class="dv">1</span>}</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(baseURL)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(URLpost)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#GET DATA FROM API</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(baseURL, URLpost) <span class="co">#request data from the server</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># print(response.url);  </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> response.json() <span class="co">#extract txt data from request into json</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(json.dumps(response, indent<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># #GET TIMESTAMP FOR PULL REQUEST</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>timestamp <span class="op">=</span> datetime.now().strftime(<span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st">-H%H-M%M-S%S"</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># SAVE TO FILE </span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(timestamp<span class="op">+</span><span class="st">'-newapi-raw-data.json'</span>, <span class="st">'w'</span>) <span class="im">as</span> outfile:</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    json.dump(response, outfile, indent<span class="op">=</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>https://newsapi.org/v2/everything?
+{
+  "status": "ok",
+  "totalResults": 5,
+  "articles": [
+    {
+      "source": {
+        "id": null,
+        "name": "Forbes"
+      },
+      "author": "Zinnia Lee, Forbes Staff, \n Zinnia Lee, Forbes Staff\n https://www.forbes.com/sites/zinnialee/",
+      "title": "This Social Enterprise Backed By Swire And Nan Fung\u2019s Chen Family Is Teaching Emotional Education In Exam-Obsessed Hong Kong",
+      "description": "The lack of emotional education in Hong Kong's exam-oriented system inspired Anthony Ngai, Matthew Kwok and Raymond Yang to establish Just Feel.",
+      "url": "https://www.forbes.com/sites/zinnialee/2023/09/04/this-social-enterprise-backed-by-swire-and-nan-fungs-chen-family-is-teaching-emotional-education-in-exam-obsessed-hong-kong/",
+      "urlToImage": "https://imageio.forbes.com/specials-images/imageserve/64ef0f6fb3f3f3e2a24af6bd/0x0.jpg?format=jpg&amp;crop=2861,1609,x0,y0,safe&amp;width=1200",
+      "publishedAt": "2023-09-05T03:00:43Z",
+      "content": "Just Feel cofounders (left to right): Anthony Ngai, Matthew Kwok and Raymond Yang.\r\nJust Feel\r\nDuring their time serving as teaching fellows at elementary schools in Hong Kong, Matthew Kwok and Raymo\u2026 [+4216 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "PRNewswire"
+      },
+      "author": null,
+      "title": "Jockey Club closes Philanthropy for Better Cities Forum with call for global multi-level collaboration in quest for fairer societies",
+      "description": "HONG KONG, Sept. 12, 2023 /PRNewswire/ -- The third Philanthropy for Better Cities Forum, convened by The Hong Kong Jockey Club Charities Trust, concluded successfully today (12 September) at the West Kowloon Cultural District in Hong Kong. The two-day forum \u2026",
+      "url": "https://www.prnewswire.com/news-releases/jockey-club-closes-philanthropy-for-better-cities-forum-with-call-for-global-multi-level-collaboration-in-quest-for-fairer-societies-301924908.html",
+      "urlToImage": "https://mma.prnewswire.com/media/2208533/P1_20230912_PBC_Closing.jpg?p=facebook",
+      "publishedAt": "2023-09-12T14:12:00Z",
+      "content": "HONG KONG, Sept. 12, 2023 /PRNewswire/ -- The third Philanthropy for Better Cities Forum, convened by The Hong Kong Jockey Club Charities Trust, concluded successfully today (12 September) at the Wes\u2026 [+4860 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "PRNewswire"
+      },
+      "author": null,
+      "title": "Jockey Club announces Institute of Philanthropy - bringing together local, regional and global thought leadership for the betterment of society",
+      "description": "HONG KONG, Sept. 12, 2023 /PRNewswire/ -- The Hong Kong Jockey Club announced the establishment of the Institute of Philanthropy (\"IoP\") at the opening of the Philanthropy for Better Cities Forum 2023 today (11 September) at the West Kowloon Cultural District\u2026",
+      "url": "https://www.prnewswire.com/news-releases/jockey-club-announces-institute-of-philanthropy---bringing-together-local-regional-and-global-thought-leadership-for-the-betterment-of-society-301924097.html",
+      "urlToImage": "https://mma.prnewswire.com/media/2208074/P1_20230911_PBC_IOP.jpg?p=facebook",
+      "publishedAt": "2023-09-12T04:48:00Z",
+      "content": "HONG KONG, Sept. 12, 2023 /PRNewswire/ -- The Hong Kong Jockey Club announced the establishment of the Institute of Philanthropy (\"IoP\") at the opening of the Philanthropy for Better Cities Forum 202\u2026 [+4780 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Dezeen"
+      },
+      "author": "Dezeen staff",
+      "title": "Eight projects by students at Hong Kong Design Institute",
+      "description": "Dezeen School Shows: a collection of silver jewellery informed by the process of making a phone call is included in Dezeen's latest school show by students at Hong Kong Design Institute. Also included is a greyscale cityscape comprised of photographs of iconi\u2026",
+      "url": "https://www.dezeen.com/2023/09/28/hong-kong-design-institute-jewellery-interiors-design-projects-schoolshows/",
+      "urlToImage": "https://static.dezeen.com/uploads/2023/09/hong-kong-design-institute-dezeen-schoolshows_dezeen_2364_col_3-copy-600x600.jpg",
+      "publishedAt": "2023-09-28T16:26:56Z",
+      "content": "Dezeen School Shows: a collection of silver jewellery informed by the process of making a phone call is included in Dezeen's latest school show by students at Hong Kong Design Institute. \r\nAlso inclu\u2026 [+6956 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "PRNewswire"
+      },
+      "author": null,
+      "title": "Horse and sports betting market to grow by USD 171.87 million from 2022 to 2027 | Increasing digital connectivity drives market growth - Technavio",
+      "description": "NEW YORK, Aug. 29, 2023 /PRNewswire/ -- The global horse and sports betting market size is estimated to increase by USD 171.87 million from 2022 to 2027. The market's growth momentum will progress at a CAGR of 9.64%. Increasing digital connectivity drives the\u2026",
+      "url": "https://www.prnewswire.com/news-releases/horse-and-sports-betting-market-to-grow-by-usd-171-87-million-from-2022-to-2027--increasing-digital-connectivity-drives-market-growth---technavio-301911871.html",
+      "urlToImage": "https://mma.prnewswire.com/media/2195907/20230822074457_bw_2023_v1.jpg?p=facebook",
+      "publishedAt": "2023-08-29T09:30:00Z",
+      "content": "NEW YORK, Aug. 29, 2023 /PRNewswire/ -- The\u00a0global horse and sports betting\u00a0market size is estimated to increase by USD 171.87 million\u00a0from 2022 to 2027. The market's growth momentum will progress at\u2026 [+9088 chars]"
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> string_cleaner(input_string):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>: </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        out<span class="op">=</span>re.sub(<span class="vs">r"""</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="vs">                    [,.;@#?!&amp;$-]+  # Accept one or more copies of punctuation</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="vs">                    \ *           # plus zero or more copies of a space,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="vs">                    """</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                    <span class="st">" "</span>,          <span class="co"># and replace it with a single space</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                    input_string, flags<span class="op">=</span>re.VERBOSE)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">#REPLACE SELECT CHARACTERS WITH NOTHING</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        out <span class="op">=</span> re.sub(<span class="st">'[’.]+'</span>, <span class="st">''</span>, input_string)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">#ELIMINATE DUPLICATE WHITESPACES USING WILDCARDS</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        out <span class="op">=</span> re.sub(<span class="vs">r'\s+'</span>, <span class="st">' '</span>, out)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">#CONVERT TO LOWER CASE</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        out<span class="op">=</span>out.lower()</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span>:</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"ERROR"</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        out<span class="op">=</span><span class="st">''</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>article_list<span class="op">=</span>response[<span class="st">'articles'</span>]   <span class="co">#list of dictionaries for each article</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>article_keys<span class="op">=</span>article_list[<span class="dv">0</span>].keys()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"AVAILABLE KEYS:"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(article_keys)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>index<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>cleaned_data<span class="op">=</span>[]<span class="op">;</span>  </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> article <span class="kw">in</span> article_list:</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    tmp<span class="op">=</span>[]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(verbose):</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"#------------------------------------------"</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"#"</span>,index)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"#------------------------------------------"</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key <span class="kw">in</span> article_keys:</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(verbose):</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"----------------"</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(key)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(article[key])</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"----------------"</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(key<span class="op">==</span><span class="st">'source'</span>):</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            src<span class="op">=</span>string_cleaner(article[key][<span class="st">'name'</span>])</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>            tmp.append(src) </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(key<span class="op">==</span><span class="st">'author'</span>):</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>            author<span class="op">=</span>string_cleaner(article[key])</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>            <span class="co">#ERROR CHECK (SOMETIMES AUTHOR IS SAME AS PUBLICATION)</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span>(src <span class="kw">in</span> author): </span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>                <span class="bu">print</span>(<span class="st">" AUTHOR ERROR:"</span>,author)<span class="op">;</span>author<span class="op">=</span><span class="st">'NA'</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>            tmp.append(author)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(key<span class="op">==</span><span class="st">'title'</span>):</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>             tmp.append(string_cleaner(article[key]))</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(key<span class="op">==</span><span class="st">'description'</span>):</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>            tmp.append(string_cleaner(article[key]))</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># if(key=='content'):</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>        <span class="co">#     tmp.append(string_cleaner(article[key]))</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(key<span class="op">==</span><span class="st">'publishedAt'</span>):</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>            <span class="co">#DEFINE DATA PATERN FOR RE TO CHECK  .* --&gt; wildcard</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>            ref <span class="op">=</span> re.<span class="bu">compile</span>(<span class="st">'.*-.*-.*T.*:.*:.*Z'</span>)</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>            date<span class="op">=</span>article[key]</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span>(<span class="kw">not</span> ref.match(date)):</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>                <span class="bu">print</span>(<span class="st">" DATE ERROR:"</span>,date)<span class="op">;</span> date<span class="op">=</span><span class="st">"NA"</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>            tmp.append(date)</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    cleaned_data.append(tmp)</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    index<span class="op">+=</span><span class="dv">1</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>AVAILABLE KEYS:
+dict_keys(['source', 'author', 'title', 'description', 'url', 'urlToImage', 'publishedAt', 'content'])
+#------------------------------------------
+# 0
+#------------------------------------------
+----------------
+source
+{'id': None, 'name': 'Forbes'}
+----------------
+----------------
+author
+Zinnia Lee, Forbes Staff, 
+ Zinnia Lee, Forbes Staff
+ https://www.forbes.com/sites/zinnialee/
+----------------
+ AUTHOR ERROR: zinnia lee, forbes staff, zinnia lee, forbes staff https://wwwforbescom/sites/zinnialee/
+----------------
+title
+This Social Enterprise Backed By Swire And Nan Fung’s Chen Family Is Teaching Emotional Education In Exam-Obsessed Hong Kong
+----------------
+----------------
+description
+The lack of emotional education in Hong Kong's exam-oriented system inspired Anthony Ngai, Matthew Kwok and Raymond Yang to establish Just Feel.
+----------------
+----------------
+url
+https://www.forbes.com/sites/zinnialee/2023/09/04/this-social-enterprise-backed-by-swire-and-nan-fungs-chen-family-is-teaching-emotional-education-in-exam-obsessed-hong-kong/
+----------------
+----------------
+urlToImage
+https://imageio.forbes.com/specials-images/imageserve/64ef0f6fb3f3f3e2a24af6bd/0x0.jpg?format=jpg&amp;crop=2861,1609,x0,y0,safe&amp;width=1200
+----------------
+----------------
+publishedAt
+2023-09-05T03:00:43Z
+----------------
+----------------
+content
+Just Feel cofounders (left to right): Anthony Ngai, Matthew Kwok and Raymond Yang.
+Just Feel
+During their time serving as teaching fellows at elementary schools in Hong Kong, Matthew Kwok and Raymo… [+4216 chars]
+----------------
+#------------------------------------------
+# 1
+#------------------------------------------
+----------------
+source
+{'id': None, 'name': 'PRNewswire'}
+----------------
+----------------
+author
+None
+----------------
+ERROR
+----------------
+title
+Jockey Club closes Philanthropy for Better Cities Forum with call for global multi-level collaboration in quest for fairer societies
+----------------
+----------------
+description
+HONG KONG, Sept. 12, 2023 /PRNewswire/ -- The third Philanthropy for Better Cities Forum, convened by The Hong Kong Jockey Club Charities Trust, concluded successfully today (12 September) at the West Kowloon Cultural District in Hong Kong. The two-day forum …
+----------------
+----------------
+url
+https://www.prnewswire.com/news-releases/jockey-club-closes-philanthropy-for-better-cities-forum-with-call-for-global-multi-level-collaboration-in-quest-for-fairer-societies-301924908.html
+----------------
+----------------
+urlToImage
+https://mma.prnewswire.com/media/2208533/P1_20230912_PBC_Closing.jpg?p=facebook
+----------------
+----------------
+publishedAt
+2023-09-12T14:12:00Z
+----------------
+----------------
+content
+HONG KONG, Sept. 12, 2023 /PRNewswire/ -- The third Philanthropy for Better Cities Forum, convened by The Hong Kong Jockey Club Charities Trust, concluded successfully today (12 September) at the Wes… [+4860 chars]
+----------------
+#------------------------------------------
+# 2
+#------------------------------------------
+----------------
+source
+{'id': None, 'name': 'PRNewswire'}
+----------------
+----------------
+author
+None
+----------------
+ERROR
+----------------
+title
+Jockey Club announces Institute of Philanthropy - bringing together local, regional and global thought leadership for the betterment of society
+----------------
+----------------
+description
+HONG KONG, Sept. 12, 2023 /PRNewswire/ -- The Hong Kong Jockey Club announced the establishment of the Institute of Philanthropy ("IoP") at the opening of the Philanthropy for Better Cities Forum 2023 today (11 September) at the West Kowloon Cultural District…
+----------------
+----------------
+url
+https://www.prnewswire.com/news-releases/jockey-club-announces-institute-of-philanthropy---bringing-together-local-regional-and-global-thought-leadership-for-the-betterment-of-society-301924097.html
+----------------
+----------------
+urlToImage
+https://mma.prnewswire.com/media/2208074/P1_20230911_PBC_IOP.jpg?p=facebook
+----------------
+----------------
+publishedAt
+2023-09-12T04:48:00Z
+----------------
+----------------
+content
+HONG KONG, Sept. 12, 2023 /PRNewswire/ -- The Hong Kong Jockey Club announced the establishment of the Institute of Philanthropy ("IoP") at the opening of the Philanthropy for Better Cities Forum 202… [+4780 chars]
+----------------
+#------------------------------------------
+# 3
+#------------------------------------------
+----------------
+source
+{'id': None, 'name': 'Dezeen'}
+----------------
+----------------
+author
+Dezeen staff
+----------------
+ AUTHOR ERROR: dezeen staff
+----------------
+title
+Eight projects by students at Hong Kong Design Institute
+----------------
+----------------
+description
+Dezeen School Shows: a collection of silver jewellery informed by the process of making a phone call is included in Dezeen's latest school show by students at Hong Kong Design Institute. Also included is a greyscale cityscape comprised of photographs of iconi…
+----------------
+----------------
+url
+https://www.dezeen.com/2023/09/28/hong-kong-design-institute-jewellery-interiors-design-projects-schoolshows/
+----------------
+----------------
+urlToImage
+https://static.dezeen.com/uploads/2023/09/hong-kong-design-institute-dezeen-schoolshows_dezeen_2364_col_3-copy-600x600.jpg
+----------------
+----------------
+publishedAt
+2023-09-28T16:26:56Z
+----------------
+----------------
+content
+Dezeen School Shows: a collection of silver jewellery informed by the process of making a phone call is included in Dezeen's latest school show by students at Hong Kong Design Institute. 
+Also inclu… [+6956 chars]
+----------------
+#------------------------------------------
+# 4
+#------------------------------------------
+----------------
+source
+{'id': None, 'name': 'PRNewswire'}
+----------------
+----------------
+author
+None
+----------------
+ERROR
+----------------
+title
+Horse and sports betting market to grow by USD 171.87 million from 2022 to 2027 | Increasing digital connectivity drives market growth - Technavio
+----------------
+----------------
+description
+NEW YORK, Aug. 29, 2023 /PRNewswire/ -- The global horse and sports betting market size is estimated to increase by USD 171.87 million from 2022 to 2027. The market's growth momentum will progress at a CAGR of 9.64%. Increasing digital connectivity drives the…
+----------------
+----------------
+url
+https://www.prnewswire.com/news-releases/horse-and-sports-betting-market-to-grow-by-usd-171-87-million-from-2022-to-2027--increasing-digital-connectivity-drives-market-growth---technavio-301911871.html
+----------------
+----------------
+urlToImage
+https://mma.prnewswire.com/media/2195907/20230822074457_bw_2023_v1.jpg?p=facebook
+----------------
+----------------
+publishedAt
+2023-08-29T09:30:00Z
+----------------
+----------------
+content
+NEW YORK, Aug. 29, 2023 /PRNewswire/ -- The&nbsp;global horse and sports betting&nbsp;market size is estimated to increase by USD 171.87 million&nbsp;from 2022 to 2027. The market's growth momentum will progress at… [+9088 chars]
+----------------</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(cleaned_data)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>title <span class="op">=</span> <span class="bu">str</span>(np.array(df[<span class="dv">2</span>]))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>descr <span class="op">=</span> <span class="bu">str</span>(np.array(df[<span class="dv">3</span>]))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> title <span class="op">+</span> descr</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> text.replace(<span class="st">'"'</span>, <span class="st">''</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> text.replace(<span class="st">"'"</span>,<span class="st">""</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> text.replace(<span class="st">"."</span>,<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="here-is-a-word-cloud-to-take-a-glimpse-into-the-text-data" class="level2">
+<h2 class="anchored" data-anchor-id="here-is-a-word-cloud-to-take-a-glimpse-into-the-text-data">Here is a Word Cloud to take a glimpse into the text data</h2>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_word_cloud(my_text):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> wordcloud <span class="im">import</span> WordCloud, STOPWORDS</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># exit()</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Import package</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define a function to plot word cloud</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_cloud(wordcloud):</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set figure size</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(<span class="dv">40</span>, <span class="dv">30</span>))</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Display image</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        plt.imshow(wordcloud) </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># No axis details</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        plt.axis(<span class="st">"off"</span>)<span class="op">;</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate word cloud</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    wordcloud <span class="op">=</span> WordCloud(</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        width <span class="op">=</span> <span class="dv">3000</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        height <span class="op">=</span> <span class="dv">2000</span>, </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        random_state<span class="op">=</span><span class="dv">1</span>, </span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        background_color<span class="op">=</span><span class="st">'salmon'</span>, </span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        colormap<span class="op">=</span><span class="st">'Pastel1'</span>, </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        collocations<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        stopwords <span class="op">=</span> STOPWORDS).generate(my_text)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    plot_cloud(wordcloud)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>generate_word_cloud(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="text_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="count-vectorizer" class="level2">
+<h2 class="anchored" data-anchor-id="count-vectorizer">Count Vectorizer</h2>
+<div class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> CountVectorizer</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>corpus <span class="op">=</span> text.split()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>vectorizer <span class="op">=</span> CountVectorizer()</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>Xs <span class="op">=</span> vectorizer.fit_transform(corpus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"vocabulary = "</span>, vectorizer.vocabulary_)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>vocabulary =  {'this': 129, 'social': 117, 'enterprise': 46, 'backed': 15, 'by': 20, 'swire': 123, 'and': 9, 'nan': 93, 'fungs': 57, 'chen': 24, 'family': 52, 'is': 73, 'teaching': 125, 'emotional': 45, 'education': 43, 'in': 65, 'exam': 50, 'obsessed': 96, 'hong': 62, 'kong': 77, 'jockey': 75, 'club': 28, 'closes': 27, 'philanthropy': 100, 'for': 54, 'better': 16, 'cities': 25, 'forum': 55, 'with': 139, 'call': 22, 'global': 58, 'multi': 92, 'level': 84, 'collaboration': 29, 'quest': 107, 'fairer': 51, 'societies': 118, 'announces': 11, 'institute': 71, 'of': 97, 'bringing': 19, 'together': 133, 'local': 85, 'regional': 109, 'thought': 130, 'leadership': 83, 'the': 127, 'betterment': 17, 'society': 119, 'eight': 44, 'projects': 106, 'students': 121, 'at': 13, 'design': 37, 'horse': 63, 'sports': 120, 'betting': 18, 'market': 87, 'to': 131, 'grow': 60, 'usd': 136, '17187': 2, 'million': 90, 'from': 56, '2022': 3, '2027': 5, 'increasing': 68, 'digital': 40, 'connectivity': 33, 'drives': 42, 'growth': 61, 'technavio': 126, 'lack': 81, 'kongs': 78, 'oriented': 99, 'system': 124, 'inspired': 70, 'anthony': 12, 'ngai': 95, 'matthew': 89, 'kwok': 80, 'raymond': 108, 'yang': 140, 'establish': 47, 'just': 76, 'feel': 53, 'sept': 111, '12': 1, '2023': 4, 'prnewswire': 103, 'third': 128, 'convened': 34, 'charities': 23, 'trust': 134, 'concluded': 32, 'successfully': 122, 'today': 132, 'september': 112, 'west': 137, 'kowloon': 79, 'cultural': 35, 'district': 41, 'two': 135, 'day': 36, 'announced': 10, 'establishment': 48, 'iop': 72, 'opening': 98, '11': 0, 'dezeen': 38, 'school': 110, 'shows': 114, 'collection': 30, 'silver': 115, 'jewellery': 74, 'informed': 69, 'process': 104, 'making': 86, 'phone': 101, 'included': 66, 'dezeens': 39, 'latest': 82, 'show': 113, 'also': 8, 'greyscale': 59, 'cityscape': 26, 'comprised': 31, 'photographs': 102, 'iconi': 64, 'new': 94, 'york': 141, 'aug': 14, '29': 6, 'size': 116, 'estimated': 49, 'increase': 67, 'markets': 88, 'momentum': 91, 'will': 138, 'progress': 105, 'cagr': 21, '964': 7}</code></pre>
+</div>
+</div>
+<p>Once again for the grader: I will clean this up way more in the future and add more description on what I am doing. For now, I am trying to just lay the groundwork.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
