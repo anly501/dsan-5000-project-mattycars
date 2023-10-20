@@ -54,10 +54,9 @@ the date (as the data became corrupted through the original API and it is not
 necessarily important when we have the year of the season and measurements of 
 the track quality to account for weather seasonality impacts on the track),
 jockey name in Cantonese, jockey url, trainer name in Cantonese, trainer url,
-race url, and last updated, and length behind winner. Length behind winner being
-deleted is okay because we have LBW for all 4 sections in another variable.
+race url, running positions (redundant information),and last updated, and length behind winner. Length behind winner being deleted is okay because we have LBW for all 4 sections in another variable.
 ```{r}
-perf.clean<-performances[,-c(3,7,15,16,19,20,28,33,37)]
+perf.clean<-performances[,-c(3,7,15,16,19,20,23,28,33,37)]
 head(perf.clean,2)
 ```
 
@@ -67,6 +66,12 @@ Singapore.
 ```{r}
 perf.clean<-perf.clean%>%
   filter(race_country == "HK")
+```
+
+Let's get rid of race_country column now that all of the values should equal "HK"
+```{r}
+perf.clean<-perf.clean%>%
+  select(-race_country)
 ```
 
 Now I am going to do one of the important parts of data cleaning for this analyis:
@@ -83,29 +88,74 @@ perf.clean$sections_time <- str_replace_all(perf.clean$sections_time,"\\}",",")
 
 ```{r}
 # splitting each section into their own column
-split2 <-str_split_fixed(perf.clean$sections,",",4)
+split2 <-str_split_fixed(perf.clean$sections,",",6)
 perf.clean$section1<-split2[,1]
 perf.clean$section2<-split2[,2]
 perf.clean$section3<-split2[,3]
 perf.clean$section4<-split2[,4]
-
+perf.clean$section5<-split2[,5]
+perf.clean$section6<-split2[,6]
 ```
 
 ```{r}
 # same thing for section time
-split3 <-str_split_fixed(perf.clean$sections_time,",",4)
+split3 <-str_split_fixed(perf.clean$sections_time,",",6)
 perf.clean$section1_time<-split3[,1]
 perf.clean$section2_time<-split3[,2]
 perf.clean$section3_time<-split3[,3]
 perf.clean$section4_time<-split3[,4]
-
+perf.clean$section5_time<-split3[,5]
+perf.clean$section6_time<-split3[,6]
 ```
+
+Getting rid of our original section and section_time columns for redundancy reasons.
+```{r}
+perf.clean<-select(perf.clean,-c(sections,sections_time))
+```
+
+Removing characters from section time column and converting to numeric
+```{r}
+library(mgsub)
+perf.clean$section1_time <- mgsub(perf.clean$section1_time,c('time','"',':',','),
+                                  c('','','',''))
+perf.clean$section2_time <- mgsub(perf.clean$section2_time,c('time','"',':',','),
+                                  c('','','',''))
+perf.clean$section3_time <- mgsub(perf.clean$section3_time,c('time','"',':',','),
+                                  c('','','',''))
+perf.clean$section4_time <- mgsub(perf.clean$section4_time,c('time','"',':',','),
+                                  c('','','',''))
+perf.clean$section5_time <- mgsub(perf.clean$section5_time,c('time','"',':',','),
+                                  c('','','',''))
+perf.clean$section6_time <- mgsub(perf.clean$section6_time,c('time','"',':',','),
+                                  c('','','',''))
+```
+
+Saving the section time columns as numeric, along with our finishing time column.
+```{r}
+perf.clean$section1_time <- as.numeric(perf.clean$section1_time)
+perf.clean$section2_time <- as.numeric(perf.clean$section2_time)
+perf.clean$section3_time <- as.numeric(perf.clean$section3_time)
+perf.clean$section4_time <- as.numeric(perf.clean$section4_time)
+perf.clean$section5_time <- as.numeric(perf.clean$section5_time)
+perf.clean$section6_time <- as.numeric(perf.clean$section6_time)
+```
+```{r}
+perf.clean$finish_time <- rowSums(perf.clean[,c("section1_time","section2_time",
+                                                "section3_time","section4_time",
+                                                "section5_time","section6_time")],na.rm=TRUE)
+```
+
 
 ```{r}
 head(perf.clean,2)
 ```
+Export cleaned data to csv
+```{r}
+write.csv(horses.clean,"../../../data/01-modified-data/horses.clean.csv",row.names = FALSE)
+```
 
-*Note for grader:Unfortunately, this part is really weird because of data loss, 
-so this will have to be further cleaned later on, most likely with the help of
-a professor. You can see that I attempted to break up the data into the 4
-sections of the track but it got a little finicky.*
+```{r}
+write.csv(perf.clean,"../../../data/01-modified-data/perf.clean.csv",row.names = FALSE)
+```
+
+

@@ -355,9 +355,9 @@ Attaching package: 'dplyr'</code></pre>
 2  Turf                             00:41.5</code></pre>
 </div>
 </div>
-<p>We are going to remove the column containing the Cantonese name for the horse, the date (as the data became corrupted through the original API and it is not necessarily important when we have the year of the season and measurements of the track quality to account for weather seasonality impacts on the track), jockey name in Cantonese, jockey url, trainer name in Cantonese, trainer url, race url, and last updated, and length behind winner. Length behind winner being deleted is okay because we have LBW for all 4 sections in another variable.</p>
+<p>We are going to remove the column containing the Cantonese name for the horse, the date (as the data became corrupted through the original API and it is not necessarily important when we have the year of the season and measurements of the track quality to account for weather seasonality impacts on the track), jockey name in Cantonese, jockey url, trainer name in Cantonese, trainer url, race url, running positions (redundant information),and last updated, and length behind winner. Length behind winner being deleted is okay because we have LBW for all 4 sections in another variable.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="ot">&lt;-</span>performances[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">7</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">28</span>,<span class="dv">33</span>,<span class="dv">37</span>)]</span>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="ot">&lt;-</span>performances[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">7</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">23</span>,<span class="dv">28</span>,<span class="dv">33</span>,<span class="dv">37</span>)]</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(perf.clean,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  horse_id horse_name horse_no race_id race_no race_country final_placing
@@ -366,12 +366,12 @@ Attaching package: 'dplyr'</code></pre>
      season going rating jockey_id jockey_name trainer_id trainer_name
 1 2006/2007     G     37  O CHAVEZ    O CHAVEZ   O CHAVEZ      L LAXON
 2 2006/2007     G     37 B VORSTER   B VORSTER  B VORSTER      L LAXON
-  winning_odds actual_weight running_positions finish_time on_date_weight gears
-1          2.6          53.5             7 7 3     1:24:50            497     B
-2          2.4          54.0             4 3 2 0.076736111            500     B
-  draw race_class distance course race_location track sections sections_time
-1    6          5     1400                    S  Turf                       
-2    2          5     1800                    S  Turf                       </code></pre>
+  winning_odds actual_weight finish_time on_date_weight gears draw race_class
+1          2.6          53.5     1:24:50            497     B    6          5
+2          2.4          54.0 0.076736111            500     B    2          5
+  distance course race_location track sections sections_time
+1     1400                    S  Turf                       
+2     1800                    S  Turf                       </code></pre>
 </div>
 </div>
 <p>We are going to once again filter out any race in the dataset that happened in Singapore.</p>
@@ -379,63 +379,121 @@ Attaching package: 'dplyr'</code></pre>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="ot">&lt;-</span>perf.clean<span class="sc">%&gt;%</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(race_country <span class="sc">==</span> <span class="st">"HK"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Let’s get rid of race_country column now that all of the values should equal “HK”</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="ot">&lt;-</span>perf.clean<span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>race_country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Now I am going to do one of the important parts of data cleaning for this analyis: Breaking the section data into 4 distinct columns, both for LBW and time.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Getting rid of brackets and commas in the columns</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections,<span class="st">"</span><span class="sc">\\</span><span class="st">[|</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">,|</span><span class="sc">\\</span><span class="st">{"</span>,<span class="st">""</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections,<span class="st">"</span><span class="sc">\\</span><span class="st">}"</span>,<span class="st">","</span>)</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections_time <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections_time,<span class="st">"</span><span class="sc">\\</span><span class="st">[|</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">,|</span><span class="sc">\\</span><span class="st">{"</span>,<span class="st">""</span>)</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections_time <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections_time,<span class="st">"</span><span class="sc">\\</span><span class="st">}"</span>,<span class="st">","</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Getting rid of brackets and commas in the columns</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections,<span class="st">"</span><span class="sc">\\</span><span class="st">[|</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">,|</span><span class="sc">\\</span><span class="st">{"</span>,<span class="st">""</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections,<span class="st">"</span><span class="sc">\\</span><span class="st">}"</span>,<span class="st">","</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections_time <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections_time,<span class="st">"</span><span class="sc">\\</span><span class="st">[|</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">,|</span><span class="sc">\\</span><span class="st">{"</span>,<span class="st">""</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections_time <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections_time,<span class="st">"</span><span class="sc">\\</span><span class="st">}"</span>,<span class="st">","</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># splitting each section into their own column</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>split2 <span class="ot">&lt;-</span><span class="fu">str_split_fixed</span>(perf.clean<span class="sc">$</span>sections,<span class="st">","</span>,<span class="dv">4</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section1<span class="ot">&lt;-</span>split2[,<span class="dv">1</span>]</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section2<span class="ot">&lt;-</span>split2[,<span class="dv">2</span>]</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section3<span class="ot">&lt;-</span>split2[,<span class="dv">3</span>]</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section4<span class="ot">&lt;-</span>split2[,<span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># splitting each section into their own column</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>split2 <span class="ot">&lt;-</span><span class="fu">str_split_fixed</span>(perf.clean<span class="sc">$</span>sections,<span class="st">","</span>,<span class="dv">6</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section1<span class="ot">&lt;-</span>split2[,<span class="dv">1</span>]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section2<span class="ot">&lt;-</span>split2[,<span class="dv">2</span>]</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section3<span class="ot">&lt;-</span>split2[,<span class="dv">3</span>]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section4<span class="ot">&lt;-</span>split2[,<span class="dv">4</span>]</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section5<span class="ot">&lt;-</span>split2[,<span class="dv">5</span>]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section6<span class="ot">&lt;-</span>split2[,<span class="dv">6</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same thing for section time</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>split3 <span class="ot">&lt;-</span><span class="fu">str_split_fixed</span>(perf.clean<span class="sc">$</span>sections_time,<span class="st">","</span>,<span class="dv">4</span>)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section1_time<span class="ot">&lt;-</span>split3[,<span class="dv">1</span>]</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section2_time<span class="ot">&lt;-</span>split3[,<span class="dv">2</span>]</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section3_time<span class="ot">&lt;-</span>split3[,<span class="dv">3</span>]</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section4_time<span class="ot">&lt;-</span>split3[,<span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same thing for section time</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>split3 <span class="ot">&lt;-</span><span class="fu">str_split_fixed</span>(perf.clean<span class="sc">$</span>sections_time,<span class="st">","</span>,<span class="dv">6</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section1_time<span class="ot">&lt;-</span>split3[,<span class="dv">1</span>]</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section2_time<span class="ot">&lt;-</span>split3[,<span class="dv">2</span>]</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section3_time<span class="ot">&lt;-</span>split3[,<span class="dv">3</span>]</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section4_time<span class="ot">&lt;-</span>split3[,<span class="dv">4</span>]</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section5_time<span class="ot">&lt;-</span>split3[,<span class="dv">5</span>]</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section6_time<span class="ot">&lt;-</span>split3[,<span class="dv">6</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Getting rid of our original section and section_time columns for redundancy reasons.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="ot">&lt;-</span><span class="fu">select</span>(perf.clean,<span class="sc">-</span><span class="fu">c</span>(sections,sections_time))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Removing characters from section time column and converting to numeric</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgsub)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section1_time <span class="ot">&lt;-</span> <span class="fu">mgsub</span>(perf.clean<span class="sc">$</span>section1_time,<span class="fu">c</span>(<span class="st">'time'</span>,<span class="st">'"'</span>,<span class="st">':'</span>,<span class="st">','</span>),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">c</span>(<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>))</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section2_time <span class="ot">&lt;-</span> <span class="fu">mgsub</span>(perf.clean<span class="sc">$</span>section2_time,<span class="fu">c</span>(<span class="st">'time'</span>,<span class="st">'"'</span>,<span class="st">':'</span>,<span class="st">','</span>),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">c</span>(<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>))</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section3_time <span class="ot">&lt;-</span> <span class="fu">mgsub</span>(perf.clean<span class="sc">$</span>section3_time,<span class="fu">c</span>(<span class="st">'time'</span>,<span class="st">'"'</span>,<span class="st">':'</span>,<span class="st">','</span>),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">c</span>(<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>))</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section4_time <span class="ot">&lt;-</span> <span class="fu">mgsub</span>(perf.clean<span class="sc">$</span>section4_time,<span class="fu">c</span>(<span class="st">'time'</span>,<span class="st">'"'</span>,<span class="st">':'</span>,<span class="st">','</span>),</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">c</span>(<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>))</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section5_time <span class="ot">&lt;-</span> <span class="fu">mgsub</span>(perf.clean<span class="sc">$</span>section5_time,<span class="fu">c</span>(<span class="st">'time'</span>,<span class="st">'"'</span>,<span class="st">':'</span>,<span class="st">','</span>),</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">c</span>(<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>))</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section6_time <span class="ot">&lt;-</span> <span class="fu">mgsub</span>(perf.clean<span class="sc">$</span>section6_time,<span class="fu">c</span>(<span class="st">'time'</span>,<span class="st">'"'</span>,<span class="st">':'</span>,<span class="st">','</span>),</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">c</span>(<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>,<span class="st">''</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Saving the section time columns as numeric, along with our finishing time column.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section1_time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(perf.clean<span class="sc">$</span>section1_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section2_time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(perf.clean<span class="sc">$</span>section2_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section3_time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(perf.clean<span class="sc">$</span>section3_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section4_time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(perf.clean<span class="sc">$</span>section4_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section5_time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(perf.clean<span class="sc">$</span>section5_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>section6_time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(perf.clean<span class="sc">$</span>section6_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(perf.clean,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>finish_time <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(perf.clean[,<span class="fu">c</span>(<span class="st">"section1_time"</span>,<span class="st">"section2_time"</span>,</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"section3_time"</span>,<span class="st">"section4_time"</span>,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"section5_time"</span>,<span class="st">"section6_time"</span>)],<span class="at">na.rm=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(perf.clean,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  horse_id horse_name horse_no race_id race_no race_country final_placing
-1     A001 BURST AWAY        6     250       1           HK            11
-2     A001 BURST AWAY        6     313       6           HK            11
-     season going rating jockey_id jockey_name trainer_id trainer_name
-1 2016/2017     G     72        MG     G Mosse        MKL      K L Man
-2 2016/2017     G     72       YML   M L Yeung        MKL      K L Man
-  winning_odds actual_weight running_positions finish_time on_date_weight gears
-1           49           125            9 7 11     1.10.04           1083      
-2           30           124            4 3 11     1.11.86           1073      
-  draw race_class distance course race_location track
-1   13          3     1200      A            ST  Turf
-2    6          3     1200      A            HV  Turf
-                                                                                 sections
-1         "lbw": "5-1/4" "placing": 9, "lbw": "3" "placing": 7, "lbw": "4" "placing": 11,
-2 "lbw": "2-1/4" "placing": 4, "lbw": "1-1/2" "placing": 3, "lbw": "6-1/2" "placing": 11,
-                                       sections_time
-1 "time": "24.21", "time": "22.03", "time": "23.80",
-2 "time": "23.73", "time": "23.61", "time": "24.52",
-                     section1                     section2
-1 "lbw": "5-1/4" "placing": 9      "lbw": "3" "placing": 7
-2 "lbw": "2-1/4" "placing": 4  "lbw": "1-1/2" "placing": 3
-                       section3 section4   section1_time    section2_time
-1      "lbw": "4" "placing": 11          "time": "24.21"  "time": "22.03"
-2  "lbw": "6-1/2" "placing": 11          "time": "23.73"  "time": "23.61"
-     section3_time section4_time
-1  "time": "23.80"              
-2  "time": "24.52"              </code></pre>
+<pre><code>  horse_id horse_name horse_no race_id race_no final_placing    season going
+1     A001 BURST AWAY        6     250       1            11 2016/2017     G
+2     A001 BURST AWAY        6     313       6            11 2016/2017     G
+  rating jockey_id jockey_name trainer_id trainer_name winning_odds
+1     72        MG     G Mosse        MKL      K L Man           49
+2     72       YML   M L Yeung        MKL      K L Man           30
+  actual_weight finish_time on_date_weight gears draw race_class distance
+1           125       70.04           1083         13          3     1200
+2           124       71.86           1073          6          3     1200
+  course race_location track                    section1
+1      A            ST  Turf "lbw": "5-1/4" "placing": 9
+2      A            HV  Turf "lbw": "2-1/4" "placing": 4
+                      section2                      section3 section4 section5
+1      "lbw": "3" "placing": 7      "lbw": "4" "placing": 11                  
+2  "lbw": "1-1/2" "placing": 3  "lbw": "6-1/2" "placing": 11                  
+  section6 section1_time section2_time section3_time section4_time
+1                  24.21         22.03         23.80            NA
+2                  23.73         23.61         24.52            NA
+  section5_time section6_time
+1            NA            NA
+2            NA            NA</code></pre>
 </div>
 </div>
-<p><em>Note for grader:Unfortunately, this part is really weird because of data loss, so this will have to be further cleaned later on, most likely with the help of a professor. You can see that I attempted to break up the data into the 4 sections of the track but it got a little finicky.</em></p>
+<p>Export cleaned data to csv</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(horses.clean,<span class="st">"../../../data/01-modified-data/horses.clean.csv"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(perf.clean,<span class="st">"../../../data/01-modified-data/perf.clean.csv"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section>

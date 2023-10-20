@@ -20,7 +20,7 @@ website:
         menu: 
           - cleaning/cleaning.rmd
           - cleaning/text.ipynb
-      - href: eda/eda.ipynb
+      - href: eda/eda.rmd
         text: Data Exploration
       - href: clustering/clustering.qmd
         text: Clustering
