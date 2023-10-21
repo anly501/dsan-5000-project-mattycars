@@ -260,24 +260,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sklearn </span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="3">
+<div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reading in our data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>horses <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/horses.clean.csv'</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/perf.clean.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_202120/2292367370.py:3: DtypeWarning: Columns (9,17,24,25,26,27,28,29) have mixed types. Specify dtype option on import or set low_memory=False.
+<pre><code>/tmp/ipykernel_214653/2292367370.py:3: DtypeWarning: Columns (9,17,24,25,26,27,28,29) have mixed types. Specify dtype option on import or set low_memory=False.
   perf = pd.read_csv('../../../data/01-modified-data/perf.clean.csv')</code></pre>
 </div>
 </div>
 <p>We are now going to join horse attributes from the horses data set with the performance dataset.</p>
-<div class="cell" data-execution_count="8">
+<div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Need to join color, sex, and import type with perf data. Then, create a race_length variable, along with a column that outputs 1 or 0 for podium finish.</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Data can then be cleaned to only include features of interest.</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>perf_clean <span class="op">=</span> pd.merge(perf,horses[[<span class="st">"horse_id"</span>,<span class="st">"colour"</span>,<span class="st">"sex"</span>,<span class="st">"import_type"</span>]],on<span class="op">=</span><span class="st">"horse_id"</span>,how <span class="op">=</span> <span class="st">"inner"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we are going to create a variable “podium” that is equal to 1 if a horse placed in the top 3 and 0 if it did not. This variable is what we will be trying to classify with a Bernoulli Naive Bayes Classifier.</p>
-<div class="cell" data-execution_count="18">
+<div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>perf_clean[<span class="st">'podium'</span>] <span class="op">=</span> np.nan</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(perf_clean[<span class="st">"final_placing"</span>])):   </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> perf_clean[<span class="st">"final_placing"</span>][i] <span class="op">==</span> <span class="dv">1</span> <span class="kw">or</span> perf_clean[<span class="st">"final_placing"</span>][i] <span class="op">==</span> <span class="dv">2</span> <span class="kw">or</span> perf_clean[<span class="st">"final_placing"</span>][i] <span class="op">==</span> <span class="dv">3</span>:</span>
@@ -285,12 +285,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        perf_clean[<span class="st">'podium'</span>][i] <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_90847/1377842129.py:6: SettingWithCopyWarning: 
+<pre><code>/tmp/ipykernel_214653/1377842129.py:6: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
   perf_clean['podium'][i] = 0
-/tmp/ipykernel_90847/1377842129.py:4: SettingWithCopyWarning: 
+/tmp/ipykernel_214653/1377842129.py:4: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
@@ -298,13 +298,13 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 <p>Now we will create a subset of data with our features of interest. Our features of interest are all of our categorical variables.</p>
-<div class="cell" data-execution_count="303">
+<div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>perf_classifier <span class="op">=</span> perf_clean[[<span class="st">'podium'</span>,<span class="st">'colour'</span>,<span class="st">'sex'</span>,<span class="st">'import_type'</span>,<span class="st">'draw'</span>,<span class="st">'rating'</span>]]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>perf_classifier <span class="op">=</span> perf_classifier.dropna()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>One important point to note is that we will not be looking at finishing time as a classifier of podium finishing as we want to create a classifier model that can take features related to a horse that can be recorded BEFORE a horse runs a race. Mean or median finishing time at various race distances could be used, but such a measurement is mostly taken into account with the horse rating variable.</p>
 <p>With our feature set, we must now dummy code our categorical features.</p>
-<div class="cell" data-execution_count="305">
+<div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> preprocessing</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>perf_classifier_encode <span class="op">=</span> perf_classifier.loc[:,perf_classifier.columns <span class="op">!=</span> <span class="st">'draw'</span>]</span>
@@ -313,9 +313,9 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>perf_classifier_encode <span class="op">=</span> pd.DataFrame(perf_classifier_encode)</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>perf_classifier_encode[<span class="st">'draw'</span>] <span class="op">=</span> perf_classifier[<span class="st">'draw'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="306">
+<div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>perf_classifier_encode.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="306">
+<div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 
 
@@ -368,12 +368,12 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <section id="feature-selection-for-categorical-naive-bayes" class="level2">
 <h2 class="anchored" data-anchor-id="feature-selection-for-categorical-naive-bayes">Feature Selection for Categorical Naive Bayes</h2>
 <p>Now we will define our feature set, which is all categorical variables, and dependent variable, y (podium).</p>
-<div class="cell" data-execution_count="358">
+<div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array(perf_classifier_encode.loc[:, perf_classifier_encode.columns <span class="op">!=</span> <span class="st">'podium'</span>])</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([perf_classifier_encode[<span class="st">'podium'</span>]])</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> y.transpose()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="359">
+<div class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span>x.shape[<span class="dv">0</span>]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>l <span class="op">=</span> [<span class="op">*</span><span class="bu">range</span>(N)]     <span class="co"># indices</span></span>
@@ -388,12 +388,12 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(validate_index[<span class="dv">0</span>:<span class="dv">10</span>])</span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(test_index[<span class="dv">0</span>:<span class="dv">10</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[243971, 123028, 239970, 216575, 81417, 210381, 153151, 254241, 42824, 62997]
-[173331, 19509, 189987, 34654, 75458, 249089, 157753, 135303, 62237, 117088]
-[13276, 174962, 18244, 266141, 103888, 205188, 29317, 126834, 6504, 252353]</code></pre>
+<pre><code>[190473, 156129, 137523, 260254, 183039, 203843, 146247, 37677, 110245, 252270]
+[42082, 84359, 217230, 177108, 97894, 52494, 71092, 65024, 108345, 176631]
+[24596, 221411, 33609, 119048, 182087, 69609, 81023, 11185, 186924, 203706]</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="360">
+<div class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> CategoricalNB</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
@@ -442,10 +442,10 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <pre><code>&lt;class 'numpy.ndarray'&gt; &lt;class 'numpy.ndarray'&gt;
 (266164, 5) (266164, 1)
 (266164, 5) (266164, 1)
-74.81014976682587 74.74922042303791 0.05170540000017354 0.01639709999972183</code></pre>
+74.74909712535985 74.94082729082918 0.057764799999993954 0.018997599999998727</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="361">
+<div class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">##UTILITY FUNCTION TO INITIALIZE RELEVANT ARRAYS</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> initialize_arrays():</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> num_features,train_accuracies</span>
@@ -456,7 +456,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    train_time<span class="op">=</span>[]</span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    eval_time<span class="op">=</span>[]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="362">
+<div class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># INITIALIZE ARRAYS</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>initialize_arrays()</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -484,14 +484,14 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>partial_grid_search(num_runs<span class="op">=</span><span class="dv">5</span>, min_index<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>1 1 1 74.77351818194626 74.70037945673818
-2 2 2 74.77351818194626 74.70037945673818
-3 3 3 74.77351818194626 74.70037945673818
-4 4 4 74.80263559556852 74.7379494308149
-5 5 5 74.81014976682587 74.74922042303791</code></pre>
+<pre><code>1 1 1 74.70448173351932 74.91828530638314
+2 2 2 74.70448173351932 74.91828530638314
+3 3 3 74.70448173351932 74.91828530638314
+4 4 4 74.74111331839892 74.9370702934215
+5 5 5 74.74909712535985 74.94082729082918</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="363">
+<div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,train_accuracies,<span class="st">'-or'</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,test_accuracies,<span class="st">'-ob'</span>)</span>
@@ -511,7 +511,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 <p>We can see that our model becomes more accurate when draw and ranking are added as features, with a larger jump in accuracy when draw is included as a feature.</p>
-<div class="cell" data-execution_count="364">
+<div class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>best_acc <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> x.shape[<span class="dv">1</span>]</span>
@@ -529,13 +529,13 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(best_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[[ 3 72 13]
- [ 3 72  6]
- [ 3 71  1]
+<pre><code>[[ 1 72]
+ [ 1 72]
+ [ 1 71]
  ...
- [ 3 55  5]
- [ 3 63  1]
- [ 3 60  7]]</code></pre>
+ [ 3 55]
+ [ 3 63]
+ [ 3 60]]</code></pre>
 </div>
 </div>
 <p>The best subset of features are sex, rating, and draw.</p>
@@ -543,12 +543,12 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <section id="fitting-a-final-optimal-nb-model" class="level2">
 <h2 class="anchored" data-anchor-id="fitting-a-final-optimal-nb-model">Fitting a Final, “Optimal” NB Model</h2>
 <p>We will now use our subset of features to fit a final NB model. Our training model, consisting of the optimal feature set, will take a split of test data from the original dataset in order to give the model “unseen” data with classfication labels we already know, so that we can develop accurate metrics surroudning the performance of our model.</p>
-<div class="cell" data-execution_count="322">
+<div class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array(perf_classifier_encode[[<span class="st">'sex'</span>,<span class="st">'draw'</span>,<span class="st">'rating'</span>]])</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([perf_classifier_encode[<span class="st">'podium'</span>]])</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> y.transpose()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="327">
+<div class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span>x.shape[<span class="dv">0</span>]</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>l <span class="op">=</span> [<span class="op">*</span><span class="bu">range</span>(N)]     <span class="co"># indices</span></span>
@@ -567,7 +567,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 <p>We can see above that our model has a test accuracy of 74.83% and has a test accuracy of 74.76% which is fairly strong. Because both our training and test accuracies are very close in magnitude with the test accuracy being slightly larger, we can conclude that our model is definitely not overfit as the test accuracy would be much lower if this were the case. There might be the argument that our model underfits the data because our test accuracy is so close to the train accuracy, and as you will see later, our F-1 score is pretty abysmal. We explore this idea in a little bit.</p>
-<div class="cell" data-execution_count="2">
+<div class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix, ConfusionMatrixDisplay</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> metrics</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>x_train<span class="op">=</span>x[train_index]</span>
@@ -584,23 +584,27 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm)</span>
 <span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
 <span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-error">
-<pre><code>NameError: name 'x' is not defined</code></pre>
+<div class="cell-output cell-output-display">
+<p><img src="NB_categorical_classifier_files/figure-html/cell-19-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>Accuracy <span class="op">=</span> metrics.accuracy_score(y_test, yp_test)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>Precision <span class="op">=</span> metrics.precision_score(y_test, yp_test)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>Sensitivity <span class="op">=</span> metrics.recall_score(y_test, yp_test)</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>Specificity <span class="op">=</span> metrics.recall_score(y_test, yp_test,pos_label<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>F1_score <span class="op">=</span> metrics.f1_score(y_test, yp_test)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy:"</span>,Accuracy<span class="op">*</span><span class="dv">100</span>)</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Precision:"</span>, Precision<span class="op">*</span><span class="dv">100</span>)</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sensitivity:"</span>,Sensitivity<span class="op">*</span><span class="dv">100</span>)</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Specificity:"</span>,Specificity<span class="op">*</span><span class="dv">100</span>)</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"F1 Score:"</span>,F1_score<span class="op">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-error">
-<pre><code>NameError: name 'metrics' is not defined</code></pre>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>Accuracy <span class="op">=</span> metrics.accuracy_score(y_test, yp_test)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>Precision <span class="op">=</span> metrics.precision_score(y_test, yp_test)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>Sensitivity <span class="op">=</span> metrics.recall_score(y_test, yp_test)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>Specificity <span class="op">=</span> metrics.recall_score(y_test, yp_test,pos_label<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>F1_score <span class="op">=</span> metrics.f1_score(y_test, yp_test)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy:"</span>,Accuracy<span class="op">*</span><span class="dv">100</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Precision:"</span>, Precision<span class="op">*</span><span class="dv">100</span>)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sensitivity:"</span>,Sensitivity<span class="op">*</span><span class="dv">100</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Specificity:"</span>,Specificity<span class="op">*</span><span class="dv">100</span>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"F1 Score:"</span>,F1_score<span class="op">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Accuracy: 74.53882856820829
+Precision: 52.0
+Sensitivity: 0.38353739489600236
+Specificity: 99.8790200625063
+F1 Score: 0.7614584858690876</code></pre>
 </div>
 </div>
 <p>We can notice a few things. First of all, our model is about 75% accurate which is very strong. At the surface level, our precision is also fairly strong at around 60%. Of the horse podium finishers predicted, our model predicts correctly predicts them as podium finishers 60% of the time. HOWEVER, our confusion matrix shows that our model only predicted 27 out of the over 20,0000 observations as correctly positive podium finishers. We can see in the confusion matrix that the model is REALLY good at predicting non-podium finishers with a specificity of around 99%. This characteristic is not really impressive in practicality, however, as we are really just interested in predicting horse podium finishers. Resultantly, our ability in predicting positive results is very low, with an EXTREMELY low sensitity score. Our F-1 score is also VERY low, showing that this model is overall not very effective at all for predicting horse racing podium finishes. This characteristic is also an indication that our model is very underfitted as we are not capturing all neccessary patterns and behaviors neccessary for correctly prediciting podium finishes.</p>
