@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>DSAN-5000: Project - Classification Trees</title>
+<title>DSAN-5000: Project – naivebayesintro</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -185,30 +185,57 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-to-naive-bayes" id="toc-introduction-to-naive-bayes" class="nav-link active" data-scroll-target="#introduction-to-naive-bayes">Introduction to Naive Bayes</a>
+  <ul class="collapse">
+  <li><a href="#overview-of-naive-bayes" id="toc-overview-of-naive-bayes" class="nav-link" data-scroll-target="#overview-of-naive-bayes">Overview of Naive Bayes</a></li>
+  <li><a href="#types-of-naive-bayes-algorithms" id="toc-types-of-naive-bayes-algorithms" class="nav-link" data-scroll-target="#types-of-naive-bayes-algorithms">Types of Naive Bayes Algorithms</a></li>
+  <li><a href="#project-applications" id="toc-project-applications" class="nav-link" data-scroll-target="#project-applications">Project Applications</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Classification Trees</h1>
+
+
+<section id="introduction-to-naive-bayes" class="level1">
+<h1>Introduction to Naive Bayes</h1>
+<p><em>(Section adapted from <a href="https://www.analyticsvidhya.com/blog/2017/09/naive-bayes-explained/">Analytics Vidhya</a>)</em></p>
+<section id="overview-of-naive-bayes" class="level2">
+<h2 class="anchored" data-anchor-id="overview-of-naive-bayes">Overview of Naive Bayes</h2>
+<p>Naive Bayes Classification is a supervised machine learning technique that is used to classify data into given classes/categories based on a set of features in a data set. Naive Bayes algorithims essentially model a distribution of inputs for a given class/category. Naive Bayes classifiers are considered very simple classfication models in machine learning. A Naive Bayes algorthim utilizes Bayes’ theorem in order to apply a probability that a given data observation belongs to a certain class or category. This probability is used then to assign a classification to the observation. This probability is called the <strong>posterior probability</strong>. The equation for posterior probability can be seen below.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/bayes.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Bayes Theorem</figcaption>
+</figure>
 </div>
+<p><em>(I will make sure this is higher resolution later.)</em></p>
+<p>In our case, c is equal to the class when we are trying to predict and x is equal to a predictor, an attribute of our dataset. Our computers are able to very quickly generate these probabilities for all of our predictors of interest and then assign a class to a data observation based on the highest posterior probability. It is important to note that an important assumption of Naive Bayes Classifcation is that all predictors are independent of each other.</p>
+<p>Naive Bayes is a very fast and easy way to generate classification predicitions and performs very well in cases of categorical input variables compared to numerical variables (where normality is assumed for these variables). When the assumption of independence holds, Naive Bayes often performs better than other machine learning methods like logistic regression, but this assumption of independence can also serve as a major detriment to this algorithim as in real life, it is very unlikely we have a set of predictors that are completely independent.</p>
+</section>
+<section id="types-of-naive-bayes-algorithms" class="level2">
+<h2 class="anchored" data-anchor-id="types-of-naive-bayes-algorithms">Types of Naive Bayes Algorithms</h2>
+<p>In Python, under the sckit-learn library, there are a few main NB models we can use for classification. These models include: * Gaussian Naive Bayes * Multinomial Naive Bayes * Bernouolli Naive Bayes * Complement Naive Bayes * Categorical Naive Bayes</p>
+<p><strong>Gaussian Naive Bayes</strong> assumes that our features are all continous, numerical variables that follow a gausian distribution.</p>
+<p><strong>Multinomial Naive Bayes</strong> is used when we our features are discrete counts (a popular choice for text classification after vecotrizing a text data set).</p>
+<p><strong>Bernoulli Naive Bayes</strong> is used when our features are binary variables, typically seen as boolean vectors (0 or 1).</p>
+<p><strong>Complement Naive Bayes</strong> is a form of Multinomial NB where the complement of each class is used to calculate the model weights.</p>
+<p><strong>Categorical Naive Bayes</strong> is used when our features are all categorical variables. It should be noted that categorical variables must be encoded as numbers, typically encoded as ordinal numbers.</p>
+</section>
+<section id="project-applications" class="level2">
+<h2 class="anchored" data-anchor-id="project-applications">Project Applications</h2>
+<p>For this project, I will be using Categorical NB for the purposes of trying to predict horse racing podium finishers (when a horse places 1st, 2nd, or 3rd in a race) and Multinomial NB for sentiment analysis of tweets, with the purposes of being able to analyze the sentiment behind tweets relating to HKJC horse racing. Being able to predict horse racing podium finishers is a signficant segement of any horse racing betting market. Creating a model to try and succesfully pin down the features that drive a horse to a successful podium finish could not only serve as a strong model in its own right, but also help inform more complex predictive models that incorportate both categorical and numerical variables to predict even more specific race outcomes.</p>
+<p>Likewise, a tweet sentiment classification model will serve a couple purposes. For one, it will serve as a foundational element for creating a more complex predictive model that is able to measure public sentiment surrounding specific horses and races. It is with this sentiment measurement that an understanding of what is driving the creation of the parimutel betting odds from the lens of the betting public can be furthered analyzed. Such a classification model can also be potentially used to develop a more sophisticated predictive model that utilizes measures of public sentiment surrounding horses/races to measure ineffciencies in betting markets.</p>
 
 
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-</header>
-
-
-
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

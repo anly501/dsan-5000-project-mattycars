@@ -22,6 +22,11 @@ website:
           - cleaning/text.ipynb
       - href: eda/eda.rmd
         text: Data Exploration
+      - text: Naive Bayes Classification
+        menu: 
+          - NaiveBayes/NaiveBayesIntro.qmd
+          - NaiveBayes/NB_categorical_classifier.ipynb
+          - NaiveBayes/NB_text_classifier.ipynb
       - href: clustering/clustering.qmd
         text: Clustering
       - href: dimensionality/dimensionality.ipynb
