@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>DSAN-5000: Project - Classification of Podium Finishing at HKJC</title>
+<title>DSAN-5000: Project - Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -171,7 +171,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -180,12 +180,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../clustering/clustering.html" rel="" target="">
- <span class="menu-text">Clustering</span></a>
+    <a class="nav-link" href="../dimensionality/dimensionality.html" rel="" target="">
+ <span class="menu-text">Dimensionality Reduction</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../dimensionality/dimensionality.html" rel="" target="">
- <span class="menu-text">Dimesionality Reduction</span></a>
+    <a class="nav-link" href="../clustering/clustering.html" rel="" target="">
+ <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Classification of Podium Finishing at HKJC</h1>
+<h1 class="title">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</h1>
 </div>
 
 
@@ -263,10 +263,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reading in our data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>horses <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/horses.clean.csv'</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/perf.clean.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/perf.clean.no.error.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_214653/2292367370.py:3: DtypeWarning: Columns (9,17,24,25,26,27,28,29) have mixed types. Specify dtype option on import or set low_memory=False.
-  perf = pd.read_csv('../../../data/01-modified-data/perf.clean.csv')</code></pre>
+<pre><code>/tmp/ipykernel_355340/915142976.py:3: DtypeWarning: Columns (10,18,25,26,27,28,29,30) have mixed types. Specify dtype option on import or set low_memory=False.
+  perf = pd.read_csv('../../../data/01-modified-data/perf.clean.no.error.csv')</code></pre>
 </div>
 </div>
 <p>We are now going to join horse attributes from the horses data set with the performance dataset.</p>
@@ -285,12 +285,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        perf_clean[<span class="st">'podium'</span>][i] <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_214653/1377842129.py:6: SettingWithCopyWarning: 
+<pre><code>/tmp/ipykernel_355340/1377842129.py:6: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
   perf_clean['podium'][i] = 0
-/tmp/ipykernel_214653/1377842129.py:4: SettingWithCopyWarning: 
+/tmp/ipykernel_355340/1377842129.py:4: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
@@ -299,8 +299,8 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <p>Now we will create a subset of data with our features of interest. Our features of interest are all of our categorical variables.</p>
 <div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>perf_classifier <span class="op">=</span> perf_clean[[<span class="st">'podium'</span>,<span class="st">'colour'</span>,<span class="st">'sex'</span>,<span class="st">'import_type'</span>,<span class="st">'draw'</span>,<span class="st">'rating'</span>]]</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>perf_classifier <span class="op">=</span> perf_classifier.dropna()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>perf_cat_classifier <span class="op">=</span> perf_clean[[<span class="st">'podium'</span>,<span class="st">'colour'</span>,<span class="st">'sex'</span>,<span class="st">'import_type'</span>,<span class="st">'draw'</span>,<span class="st">'rating'</span>]]</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>perf_cat_classifier <span class="op">=</span> perf_classifier.dropna()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>One important point to note is that we will not be looking at finishing time as a classifier of podium finishing as we want to create a classifier model that can take features related to a horse that can be recorded BEFORE a horse runs a race. Mean or median finishing time at various race distances could be used, but such a measurement is mostly taken into account with the horse rating variable.</p>
 <p>With our feature set, we must now dummy code our categorical features.</p>

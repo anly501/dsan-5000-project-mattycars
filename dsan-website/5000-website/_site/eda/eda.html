@@ -168,7 +168,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -177,12 +177,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../clustering/clustering.html" rel="" target="">
- <span class="menu-text">Clustering</span></a>
+    <a class="nav-link" href="../dimensionality/dimensionality.html" rel="" target="">
+ <span class="menu-text">Dimensionality Reduction</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../dimensionality/dimensionality.html" rel="" target="">
- <span class="menu-text">Dimesionality Reduction</span></a>
+    <a class="nav-link" href="../clustering/clustering.html" rel="" target="">
+ <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
@@ -233,6 +233,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-effect-of-horse-weight-on-race-performance" id="toc-the-effect-of-horse-weight-on-race-performance" class="nav-link" data-scroll-target="#the-effect-of-horse-weight-on-race-performance">The Effect of Horse Weight on Race Performance</a>
   <ul class="collapse">
   <li><a href="#the-effect-of-horse-sex-and-import-type-on-podium-finishes" id="toc-the-effect-of-horse-sex-and-import-type-on-podium-finishes" class="nav-link" data-scroll-target="#the-effect-of-horse-sex-and-import-type-on-podium-finishes">The Effect of Horse Sex and Import Type on Podium Finishes</a></li>
+  <li><a href="#the-effect-of-a-horses-past-performance-on-race-performance" id="toc-the-effect-of-a-horses-past-performance-on-race-performance" class="nav-link" data-scroll-target="#the-effect-of-a-horses-past-performance-on-race-performance">The Effect of a Horse’s Past Performance on Race Performance</a>
+  <ul class="collapse">
+  <li><a href="#add-graph-about-days-between-rest" id="toc-add-graph-about-days-between-rest" class="nav-link" data-scroll-target="#add-graph-about-days-between-rest">Add graph about days between rest</a></li>
+  </ul></li>
+  <li><a href="#exporting-data-without-outliersdiscovered-errors" id="toc-exporting-data-without-outliersdiscovered-errors" class="nav-link" data-scroll-target="#exporting-data-without-outliersdiscovered-errors">Exporting data without outliers/discovered errors</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -471,7 +476,7 @@ $`2400`
 <p><img src="eda_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>The results from this plot are probably the most suprising out of any of the EDA results thus far. While the significance of a Horse’s weight is a popular topic of debate among horse racing handicappers, it is a common trope that the heavier horse usually wins. This trope is actually a phenomena I thought this data visualization would display, but clearly, no such phenomena is evident. In fact, all of our correlation coefficients are negative. It should be said that these correlation coefficients all convey very weak relationships. All of our coefficients, except for races above 2000m, are statistically significant, too.</p>
+<p>The results from this plot are probably the most surprising out of any of the EDA results thus far. While the significance of a Horse’s weight is a popular topic of debate among horse racing handicappers, it is a common trope that the heavier horse usually wins. This trope is actually a phenomena I thought this data visualization would display, but clearly, no such phenomena is evident. In fact, all of our correlation coefficients are negative. It should be said that these correlation coefficients all convey very weak relationships. All of our coefficients, except for races above 2000m, are statistically significant, too.</p>
 <p>With this finding, let’s look if added weight to a horse (i.e.&nbsp;jockey weight, gear, etc.) has any signifcant effect on finish time.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>g7 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(perf.no.zero,<span class="fu">aes</span>(<span class="at">x=</span>actual_weight,<span class="at">y=</span>finish_time))<span class="sc">+</span></span>
@@ -506,6 +511,42 @@ $`2400`
 </div>
 <p>I will tidy this up and add explanation later on.</p>
 <p>Note for grader: I will likely add a plot later that explores the relationship of finishing times/placement versus the specific courses that are being run at Happy Valley and Sha Tin (especially if I decide to incorporate such in any model I create). Also, it would be cool to eventually add some kind of visualization of each race course that displays average time it takes horses to complete each stretch.</p>
+</section>
+<section id="the-effect-of-a-horses-past-performance-on-race-performance" class="level2">
+<h2 class="anchored" data-anchor-id="the-effect-of-a-horses-past-performance-on-race-performance">The Effect of a Horse’s Past Performance on Race Performance</h2>
+<p>Now I am going to check see if there is any relationship between a horses’s average past placement before a race and the place the horse ends up finishing in its race.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We only want to look at horses that have run a race before, so let's filter rows where average_placing is NA</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>perf <span class="ot">&lt;-</span> perf <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>(<span class="fu">c</span>(final_placing, average_placement))</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># We also know the average_placement variable is going to have outliers since our final_placing data had outliers. Let's fix this issue.</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>perf <span class="ot">&lt;-</span> perf <span class="sc">%&gt;%</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(average_placement <span class="sc">&lt;</span> <span class="dv">15</span>)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>g9<span class="ot">&lt;-</span><span class="fu">ggplot</span>(perf,<span class="fu">aes</span>(<span class="at">x=</span>average_placement, <span class="at">y=</span>final_placing))<span class="sc">+</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_count</span>()<span class="sc">+</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Placement Before Race vs. Final Race Placing"</span>)<span class="sc">+</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Average Placement"</span>)<span class="sc">+</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Final Placing"</span>)<span class="sc">+</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">14</span>,<span class="at">by=</span><span class="dv">1</span>))<span class="sc">+</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">14</span>,<span class="at">by=</span><span class="dv">1</span>))</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>g9</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="eda_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can see something very compelling this plot: a horse’s average placement before its races appears to be very determinant in what place it will finish in a race. A horse will most likely finish 1st if it has a historic placement within 1 to 7. If a horse historically has finished closer to the middle of the pack, it is most likely to continue to finish in the mid pack. The same inference can be applied to horses with poor placements.</p>
+<section id="add-graph-about-days-between-rest" class="level3">
+<h3 class="anchored" data-anchor-id="add-graph-about-days-between-rest">Add graph about days between rest</h3>
+</section>
+</section>
+<section id="exporting-data-without-outliersdiscovered-errors" class="level2">
+<h2 class="anchored" data-anchor-id="exporting-data-without-outliersdiscovered-errors">Exporting data without outliers/discovered errors</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(perf,<span class="st">"../../../data/01-modified-data/perf.clean.no.error.csv"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section>

@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -134,7 +168,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -143,12 +177,12 @@ ul.task-list li input[type="checkbox"] {
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../clustering/clustering.html" rel="" target="">
- <span class="menu-text">Clustering</span></a>
+    <a class="nav-link active" href="../dimensionality/dimensionality.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Dimensionality Reduction</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../dimensionality/dimensionality.html" rel="" target="" aria-current="page">
- <span class="menu-text">Dimesionality Reduction</span></a>
+    <a class="nav-link" href="../clustering/clustering.html" rel="" target="">
+ <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
@@ -185,7 +219,21 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#objective" id="toc-objective" class="nav-link active" data-scroll-target="#objective">Objective</a></li>
+  <li><a href="#principal-component-analysis-pca" id="toc-principal-component-analysis-pca" class="nav-link" data-scroll-target="#principal-component-analysis-pca">Principal Component Analysis (PCA)</a>
+  <ul class="collapse">
+  <li><a href="#preparing-our-data-for-pca" id="toc-preparing-our-data-for-pca" class="nav-link" data-scroll-target="#preparing-our-data-for-pca">Preparing our data for PCA</a></li>
+  <li><a href="#analysis-of-principal-components" id="toc-analysis-of-principal-components" class="nav-link" data-scroll-target="#analysis-of-principal-components">Analysis of Principal Components</a></li>
+  </ul></li>
+  <li><a href="#multiple-correspondence-analysis" id="toc-multiple-correspondence-analysis" class="nav-link" data-scroll-target="#multiple-correspondence-analysis">Multiple Correspondence Analysis</a></li>
+  <li><a href="#t-distributed-stochastic-neighbor-embeddint-t-sne" id="toc-t-distributed-stochastic-neighbor-embeddint-t-sne" class="nav-link" data-scroll-target="#t-distributed-stochastic-neighbor-embeddint-t-sne">T-distributed Stochastic Neighbor Embeddint (t-SNE)</a></li>
+  <li><a href="#comparisons-and-conclusions" id="toc-comparisons-and-conclusions" class="nav-link" data-scroll-target="#comparisons-and-conclusions">Comparisons and Conclusions</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -207,8 +255,203 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<section id="objective" class="level1">
+<h1>Objective</h1>
+<p>The objective of this section will be to try and reduce the number of features in our dataset while simultaneously retaining as much information as possible. Our exploration into dimensionality reduction will serve as the basis for further machine learning algorithims in this project by helping us spot “irrelevant” and/or redundant features in our data. We will be performing two seperate dimensionality reduction analyses with a set of numerical features and also categorical features. The bulk of analysis in this section will be completed using scikit-learn package.</p>
+</section>
+<section id="principal-component-analysis-pca" class="level1">
+<h1>Principal Component Analysis (PCA)</h1>
+<section id="preparing-our-data-for-pca" class="level2">
+<h2 class="anchored" data-anchor-id="preparing-our-data-for-pca">Preparing our data for PCA</h2>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reading in our data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>horses <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/horses.clean.csv'</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/perf.clean.no.error.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_355532/915142976.py:3: DtypeWarning: Columns (10,18,25,26,27,28,29,30) have mixed types. Specify dtype option on import or set low_memory=False.
+  perf = pd.read_csv('../../../data/01-modified-data/perf.clean.no.error.csv')</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Need to join color, sex, and import type with perf data. Then, create a race_length variable, along with a column that outputs 1 or 0 for podium finish.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Data can then be cleaned to only include features of interest.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>perf_clean <span class="op">=</span> pd.merge(perf,horses[[<span class="st">"horse_id"</span>,<span class="st">"colour"</span>,<span class="st">"sex"</span>,<span class="st">"import_type"</span>]],on<span class="op">=</span><span class="st">"horse_id"</span>,how <span class="op">=</span> <span class="st">"inner"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For PCA, we are only interested in our numerical variables. For our categorical variables, we will be performing mutliple correspondence analysis (MCA) (see following section). We will be including discrete numerical variables with the caveat that PCA is best and primarily suited for continous, numerical variables. Using discrete data in PCA may pose some problems like violations of distributional assumptions as PCA does not take into to account assumptions of non-normality in the data (see https://staskolenikov.net/talks/Gustavo-Stas-PCA-generic.pdf). Such violations definitely poses an issue with a variable like ‘draw’ in our data which, in theory, follows a uniform distribution. Also, if a variable has high kurtosis or skewness, the variable is going to have different asymptotic properties that could impact our interpretation of our principal components. Due to these different asymptotic properties, the PCA values in our eigenvector values for our discrete features may be much lower than our continous features, even if the discrete features do, in “ground truth”, explain a significant portion of variance in our data.</p>
+<p>The authors of the paper listed above state that these problems are not major, but do need to be considered when interpreting principal components. The authors do list seperate techniques of dimensionality reduction for discrete features (i.e.&nbsp;Filmer-Pritchett procedure, polychoric PCA, and group means), but for the sake of this project, I will be doing a typical PCA with both my discrete and continous numericals in my feature set, taking into account that the discrete features might have lower PCA values.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding in podium finish as a target variable</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>perf_clean[<span class="st">'podium'</span>] <span class="op">=</span> np.nan</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(perf_clean[<span class="st">"final_placing"</span>])):   </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> perf_clean[<span class="st">"final_placing"</span>][i] <span class="op">==</span> <span class="dv">1</span> <span class="kw">or</span> perf_clean[<span class="st">"final_placing"</span>][i] <span class="op">==</span> <span class="dv">2</span> <span class="kw">or</span> perf_clean[<span class="st">"final_placing"</span>][i] <span class="op">==</span> <span class="dv">3</span>:</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        perf_clean[<span class="st">'podium'</span>][i] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        perf_clean[<span class="st">'podium'</span>][i] <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_355532/3691484775.py:7: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  perf_clean['podium'][i] = 0
+/tmp/ipykernel_355532/3691484775.py:5: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  perf_clean['podium'][i] = 1</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># All relevant numerical features including</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>perf_numerical <span class="op">=</span> perf_clean[[<span class="st">'rating'</span>,<span class="st">'actual_weight'</span>,<span class="st">'on_date_weight'</span>,<span class="st">'draw'</span>,<span class="st">'average_placement'</span>,<span class="st">'days_between'</span>, <span class="st">'podium'</span>]]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>perf_numerical <span class="op">=</span> perf_numerical.dropna()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we are going to standardize our data and peform PCA.</p>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalize feature set</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>perf_num_features <span class="op">=</span> perf_numerical.iloc[:, :<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>scaled_data <span class="op">=</span> scaler.fit_transform(perf_num_features)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> PCA()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>pca.fit(scaled_data)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>cov_matrix <span class="op">=</span> pca.get_covariance()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>eigenvectors <span class="op">=</span> pca.components_</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>eigenvalues <span class="op">=</span> pca.explained_variance_</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Covariance Matrix:"</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cov_matrix)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Eigenvalues:"</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(eigenvalues)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Eigenvectors:"</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(eigenvectors)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Covariance Matrix:
+[[ 1.00000574  0.16812366  0.15552332 -0.02631532 -0.43889779  0.01146646]
+ [ 0.16812366  1.00000574  0.04296327  0.00109719 -0.14074245  0.0101492 ]
+ [ 0.15552332  0.04296327  1.00000574 -0.00917871 -0.14289013  0.02713919]
+ [-0.02631532  0.00109719 -0.00917871  1.00000574  0.01588906  0.00257841]
+ [-0.43889779 -0.14074245 -0.14289013  0.01588906  1.00000574 -0.00136074]
+ [ 0.01146646  0.0101492   0.02713919  0.00257841 -0.00136074  1.00000574]]
+
+Eigenvalues:
+[1.60560626 1.00677582 0.99946662 0.9526173  0.87588313 0.5596853 ]
+
+Eigenvectors:
+[[-0.62733661 -0.34080662 -0.33228691  0.04763382  0.61358235 -0.03365643]
+ [-0.05315568 -0.01428587  0.21171307  0.41376421  0.06857758  0.88104725]
+ [-0.02164703 -0.20350403  0.16461573 -0.88991496  0.04338487  0.37038937]
+ [-0.00129095  0.67569924 -0.67056052 -0.17257946  0.03796183  0.25010535]
+ [ 0.29344057 -0.61894347 -0.60620044  0.06696241 -0.36899233  0.15060986]
+ [ 0.71905884 -0.05071864 -0.02311411  0.01771769  0.69234033 -0.01409562]]</code></pre>
+</div>
+</div>
+<p>Above, the eigenvector matrix displays our main piece of interest for PCA. Each column represents a principal component, with the first column representing PC1. Each row in the matrix represents the following variables, respectively: ‘rating’,‘actual_weight’,‘on_date_weight’,‘draw’,‘average_placement’,‘days_between’.</p>
+<p>Before we begin to dissect our PC values, we must define how many PC’s should be of our interest. Using the Kaiser criterion, we should only be considering PC’s with corresponding eigenvalues that are greater than 1. In our case, our third PC is just barely under 1 and the 4th is not too far behind. Therefore, knowing what we know about our inclusion of discrete features, in order to make sure we are not discluding relevant information, we are going to be looking at at least the first 4 PC’s. We can confirm our choice with the Scree Plot down below.</p>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>explained_variance_ratio <span class="op">=</span> pca.explained_variance_ratio_</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>cumulative_explained_variance <span class="op">=</span> np.cumsum(explained_variance_ratio)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the scree plot</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>plt.bar(<span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(explained_variance_ratio) <span class="op">+</span> <span class="dv">1</span>), explained_variance_ratio, alpha<span class="op">=</span><span class="fl">0.75</span>, align<span class="op">=</span><span class="st">'center'</span>, label<span class="op">=</span><span class="st">'Individual explained variance'</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>plt.step(<span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(explained_variance_ratio) <span class="op">+</span> <span class="dv">1</span>), cumulative_explained_variance, where<span class="op">=</span><span class="st">'mid'</span>, label<span class="op">=</span><span class="st">'Cumulative explained variance'</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Scree Plot'</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Principal Components'</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Explained Variance Ratio'</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="dimensionality_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>In this plot, we can see that the first five principal components actually seem to propogate the most explained variance. For this reason, we will include the fifth PC into our analysis as well.</p>
+</section>
+<section id="analysis-of-principal-components" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-of-principal-components">Analysis of Principal Components</h2>
+<p>Looking at the first principal component, it is clear there are two main features that explain most of the variance in the data: the amount of rest days between a horse’s race and horse rating. Their values in our matrix of eigenvectors are approximately 0.719 and -0.627, repectively, showing they vary inversely. These variables can be considered the most “important” of our numeric feature set.</p>
+<p>In our second principal component, we can see two features with values of 0.676 and -0.619, respectively: draw and average placement before the race. These features can be seen as our “second most important” features.</p>
+<p>In our third prinicipal component, draw and average placement also stand out as features, this time posting values of -0.671 and -0.606.</p>
+<p>Our fourth principal component showss on date weight (which does not include the gear a horse is wearing) as a standout feature with a value of -0.890. We can see actual weight, which is the weight of a horse’s gear, showing a value of 0.414 which certainly is somewhat novel, but given that it does not really exceed an “eyeball” test of being above the threshold of 0.5 and on date weight is the main standout feature of this PC, we can likely disregard actual weight.</p>
+<p>Our fifth principal component shows rating (0.614) and days of rest between races (0.692) as the most heavily weighted. We have already seen both of these features as the most heavily weighted in previous PCs so the fifth PC really is not giving us any “new” information.</p>
+<p>Upon this analysis, we can see that we most likely disregard “actual weight” as a feature in our dataset. Dropping this feature will provide some more simplicity to our analyses in future sections. It is interesting to see that the rest of the features explain a significant portion of the variance in our numerical feature set. Most interesting to me is how days of rest between races presented itself as such a significant feature, especially given this is a feature we derived ourselves during data cleaning. Horse rating being such an important feature does make sense as it is sort of a “catch all” metric of past performance by a horse that measures and synthesizes an amalgamation of features relating to a horse’s past race performance.</p>
+<p>Below is a plot that helps us visualize our dataset compared with our target variable of podium finish.</p>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>X1 <span class="op">=</span> pca.fit_transform(scaled_data)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> perf_numerical[<span class="st">'podium'</span>]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#2D PLOT</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>plt.scatter(X1[:,<span class="dv">0</span>], X1[:,<span class="dv">1</span>], c<span class="op">=</span>Y, cmap<span class="op">=</span><span class="st">'Paired'</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"rating"</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"on date weight"</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"2D Plot of Numerical Feature Set"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="dimensionality_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="multiple-correspondence-analysis" class="level1">
+<h1>Multiple Correspondence Analysis</h1>
+<p>I will complete this section at a later time, but I want to use MCA to explore categorical variables. For the sake of time in the completion of Homework 4, I will tackle this later.</p>
+</section>
+<section id="t-distributed-stochastic-neighbor-embeddint-t-sne" class="level1">
+<h1>T-distributed Stochastic Neighbor Embeddint (t-SNE)</h1>
+<p><em>Adapted from <a href="https://distill.pub/2016/misread-tsne/">“How to Use t-SNE Effectively”</a></em></p>
+<p>t-SNE is a method for visualizing high-dimensional data in a low-dimensional space. The main tuneable parameter of t-SNE is “perplexity” which essentially guides us on how much attention to pay attention to the local and global characteristics of our data. For datasets that are larger (like our dataset), larger perplexity values are needed (50+). We will take a look at our data with a wide range of perplexity values.</p>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.manifold <span class="im">import</span> TSNE</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating t-SNE visualizations for perplexity values 5, 10, 20, 30, 50, 70, and 100</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>perplexities <span class="op">=</span> [<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">50</span>, <span class="dv">70</span>, <span class="dv">90</span>, <span class="dv">100</span>]</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">8</span>))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">'t-SNE Visualization at Different Perplexity Values'</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, perplexity <span class="kw">in</span> <span class="bu">enumerate</span>(perplexities):</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a t-SNE instance with 2 components (for 2D visualization) and the current perplexity value</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    tsne <span class="op">=</span> TSNE(n_components<span class="op">=</span><span class="dv">2</span>, perplexity<span class="op">=</span>perplexity, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit and transform the data</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    X_tsne <span class="op">=</span> tsne.fit_transform(scaled_data[:<span class="dv">1000</span>,])</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Results for the i-th subplot</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> axes[i <span class="op">//</span> <span class="dv">4</span>, i <span class="op">%</span> <span class="dv">4</span>]</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    ax.scatter(X_tsne[:, <span class="dv">0</span>], X_tsne[:, <span class="dv">1</span>])</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f'Perplexity = </span><span class="sc">{</span>perplexity<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust layout</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout(rect<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.96</span>])</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="dimensionality_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>For each of the perplexity values, as we get into perplexities above 50, our datapoints start to turn into what looks like one sphere. What this evenly distributed, spherical shape is telling us is that our data is most like uniformly distributed. It might appear to be random noise, but according to our source <em>“How to Use t-SNE Effectively”</em>, such a conclusion is far from the truth. As we begin to turn up our perplexity and our visualization starts to really reveal this spherical distribution of data, we see that the density of data points is mostly consistent, with a few deviations in density here and there. These deviations are for us to try and pinpoint in further sections, but overall, our numerical feature set demonstrates that there is a uniform distribution of each of the features, which intuitively makes sense as every horse race is esentially repeated sampling of an elite pool of race horses that are only going to deviate in genetic makeup (i.e.&nbsp;weight) and statistics, like days of rest and average placement, to certain, small extent.</p>
+</section>
+<section id="comparisons-and-conclusions" class="level1">
+<h1>Comparisons and Conclusions</h1>
+<p>Overall, through PCA and t-SNE, we are able to garner a few major takeawawys. For one, despite the linear assumptions PCA uses, t-SNE tells us that these assumptions of linearity might not neccesarily be true for our data. Our data truly might be uniformly distributed, making assumptions of linearity somewhat moot when performing PCA, meaning that PCA might not be reliably selecting orthogonal directions that capture maximum variance (aka our eigenvectors). Despite this caveat, it should be said that t-SNE does show deviations from a completely and truly uniform distributed set of spatial data, allowing us to assume there is some variance at play within our dataset that can be analyzed through PCA.</p>
+<p>When we use PCA, looking at the first five principal components, we do see that that we have some features that are better at explaining the variance of our data, with horse rating and days of rest between races being the most significant of our variables. Draw and average placement came out to be our next most “important” variables, with the rest of the variables, excpet for actual weight, also showing some sort of significant explanation of the variance in the feature set.</p>
+<p>It is with all these takeaways that we are able to establish some statistically sound explanations of patterns in our data and what variables most heavily dictate a horse’s performance. We will begin to use this information in the next section, Clustering, to help us interpret results from various clustering algorithims.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

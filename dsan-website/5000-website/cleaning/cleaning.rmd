@@ -50,13 +50,10 @@ head(horses.clean,2)
 head(performances,2)
 ```
 We are going to remove the column containing the Cantonese name for the horse,
-the date (as the data became corrupted through the original API and it is not
-necessarily important when we have the year of the season and measurements of 
-the track quality to account for weather seasonality impacts on the track),
 jockey name in Cantonese, jockey url, trainer name in Cantonese, trainer url,
 race url, running positions (redundant information),and last updated, and length behind winner. Length behind winner being deleted is okay because we have LBW for all 4 sections in another variable.
 ```{r}
-perf.clean<-performances[,-c(3,7,15,16,19,20,23,28,33,37)]
+perf.clean<-performances[,-c(3,15,16,19,20,23,28,33,37)]
 head(perf.clean,2)
 ```
 
@@ -149,6 +146,38 @@ perf.clean$finish_time <- rowSums(perf.clean[,c("section1_time","section2_time",
 ```{r}
 head(perf.clean,2)
 ```
+
+Now I want to create a variable that is a measure of a horse's past performance. A past performance metric could be created to be a very complex variable that weights a multitude of features such as increases in rating over time, historical placement, finishing time history, etc.. I am going to simply create a variable that is the average placement of the horse up until the race date. I could do average race finishing time, but due to every horse running at different distances, I would have to create a an average finishing time for a horse for each distance up until the race date. This method could get computationally ineffcient and also really clutter our data with high dimensionality. For this reason, I am just going to do average placement up until the race date.
+
+```{r}
+# Convert race_date to a Date object
+perf.clean$race_date <- as.Date(perf.clean$race_date)
+
+# Arrange the data by horse_id and race_date
+perf.clean <- perf.clean %>%
+  arrange(horse_id, race_date)
+
+perf.clean <- perf.clean %>%
+  group_by(horse_id) %>%
+  mutate(average_placement = lag(cummean(final_placing))) %>%
+  ungroup()
+
+# For the first race of each horse, set average_placement to NA
+perf.clean$average_placement[!duplicated(perf.clean$horse_id)] <- NA
+
+# View the updated data frame
+head(perf.clean)
+```
+Now I also want to create a variable that indicates how much rest a horse was able to get between races.
+
+```{r}
+perf.clean <- perf.clean %>%
+  group_by(horse_id) %>%
+  mutate(days_between = c(0, diff(race_date)))
+
+head(perf.clean)
+```
+
 Export cleaned data to csv
 ```{r}
 write.csv(horses.clean,"../../../data/01-modified-data/horses.clean.csv",row.names = FALSE)

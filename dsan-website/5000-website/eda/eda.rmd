@@ -144,7 +144,7 @@ g6 <- ggplot(perf.no.zero,aes(x=on_date_weight,y=finish_time))+
   
 g6
 ```
-The results from this plot are probably the most suprising out of any of the EDA results thus far. While the significance of a Horse's weight is a popular topic of debate among horse racing handicappers, it is a common trope that the heavier horse usually wins. This trope is actually a phenomena I thought this data visualization would display, but clearly, no such phenomena is evident. In fact, all of our correlation coefficients are negative. It should be said that these correlation coefficients all convey very weak relationships. All of our coefficients, except for races above 2000m, are statistically significant, too.
+The results from this plot are probably the most surprising out of any of the EDA results thus far. While the significance of a Horse's weight is a popular topic of debate among horse racing handicappers, it is a common trope that the heavier horse usually wins. This trope is actually a phenomena I thought this data visualization would display, but clearly, no such phenomena is evident. In fact, all of our correlation coefficients are negative. It should be said that these correlation coefficients all convey very weak relationships. All of our coefficients, except for races above 2000m, are statistically significant, too.
 
 With this finding, let's look if added weight to a horse (i.e. jockey weight, gear, etc.) has any signifcant effect on finish time.
 ```{r}
@@ -176,3 +176,37 @@ g8
 I will tidy this up and add explanation later on.
 
 Note for grader: I will likely add a plot later that explores the relationship of finishing times/placement versus the specific courses that are being run at Happy Valley and Sha Tin (especially if I decide to incorporate such in any model I create). Also, it would be cool to eventually add some kind of visualization of each race course that displays average time it takes horses to complete each stretch.
+
+
+## The Effect of a Horse's Past Performance on Race Performance
+Now I am going to check see if there is any relationship between a horses's average past placement before a race and the place the horse ends up finishing in its race.
+```{r}
+library(tidyr)
+# We only want to look at horses that have run a race before, so let's filter rows where average_placing is NA
+perf <- perf %>% drop_na(c(final_placing, average_placement))
+
+# We also know the average_placement variable is going to have outliers since our final_placing data had outliers. Let's fix this issue.
+perf <- perf %>%
+  filter(average_placement < 15)
+
+g9<-ggplot(perf,aes(x=average_placement, y=final_placing))+
+  geom_count()+
+  ggtitle("Average Placement Before Race vs. Final Race Placing")+
+  xlab("Average Placement")+
+  ylab("Final Placing")+
+  scale_y_continuous(breaks=seq(1,14,by=1))+
+  scale_x_continuous(breaks=seq(1,14,by=1))
+
+g9
+```
+We can see something very compelling this plot: a horse's average placement before its races appears to be very determinant in what place it will finish in a race. A horse will most likely finish 1st if it has a historic placement within 1 to 7. If a horse historically has finished closer to the middle of the pack, it is most likely to continue to finish in the mid pack. The same inference can be applied to horses with poor placements. 
+
+
+### Add graph about days between rest
+
+
+## Exporting data without outliers/discovered errors
+```{r}
+write.csv(perf,"../../../data/01-modified-data/perf.clean.no.error.csv",row.names = FALSE)
+```
+
