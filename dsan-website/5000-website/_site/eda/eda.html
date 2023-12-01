@@ -235,7 +235,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-effect-of-horse-sex-and-import-type-on-podium-finishes" id="toc-the-effect-of-horse-sex-and-import-type-on-podium-finishes" class="nav-link" data-scroll-target="#the-effect-of-horse-sex-and-import-type-on-podium-finishes">The Effect of Horse Sex and Import Type on Podium Finishes</a></li>
   <li><a href="#the-effect-of-a-horses-past-performance-on-race-performance" id="toc-the-effect-of-a-horses-past-performance-on-race-performance" class="nav-link" data-scroll-target="#the-effect-of-a-horses-past-performance-on-race-performance">The Effect of a Horse’s Past Performance on Race Performance</a>
   <ul class="collapse">
-  <li><a href="#add-graph-about-days-between-rest" id="toc-add-graph-about-days-between-rest" class="nav-link" data-scroll-target="#add-graph-about-days-between-rest">Add graph about days between rest</a></li>
+  <li><a href="#days-of-rest-between-races" id="toc-days-of-rest-between-races" class="nav-link" data-scroll-target="#days-of-rest-between-races">Days of Rest Between Races</a></li>
   </ul></li>
   <li><a href="#exporting-data-without-outliersdiscovered-errors" id="toc-exporting-data-without-outliersdiscovered-errors" class="nav-link" data-scroll-target="#exporting-data-without-outliersdiscovered-errors">Exporting data without outliers/discovered errors</a></li>
   </ul></li>
@@ -538,14 +538,26 @@ $`2400`
 </div>
 </div>
 <p>We can see something very compelling this plot: a horse’s average placement before its races appears to be very determinant in what place it will finish in a race. A horse will most likely finish 1st if it has a historic placement within 1 to 7. If a horse historically has finished closer to the middle of the pack, it is most likely to continue to finish in the mid pack. The same inference can be applied to horses with poor placements.</p>
-<section id="add-graph-about-days-between-rest" class="level3">
-<h3 class="anchored" data-anchor-id="add-graph-about-days-between-rest">Add graph about days between rest</h3>
+<section id="days-of-rest-between-races" class="level3">
+<h3 class="anchored" data-anchor-id="days-of-rest-between-races">Days of Rest Between Races</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>g10<span class="ot">&lt;-</span><span class="fu">ggplot</span>(perf,<span class="fu">aes</span>(<span class="at">x=</span>average_placement, <span class="at">y=</span>days_between))<span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_count</span>()<span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Placement Before Race vs. Final Race Placing"</span>)<span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Days of Rest Between Races"</span>)<span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Final Placing"</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>g10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="eda_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
 </section>
 <section id="exporting-data-without-outliersdiscovered-errors" class="level2">
 <h2 class="anchored" data-anchor-id="exporting-data-without-outliersdiscovered-errors">Exporting data without outliers/discovered errors</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(perf,<span class="st">"../../../data/01-modified-data/perf.clean.no.error.csv"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(perf,<span class="st">"../../../data/01-modified-data/perf.clean.no.error.csv"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

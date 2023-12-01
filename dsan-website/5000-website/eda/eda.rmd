@@ -202,7 +202,18 @@ g9
 We can see something very compelling this plot: a horse's average placement before its races appears to be very determinant in what place it will finish in a race. A horse will most likely finish 1st if it has a historic placement within 1 to 7. If a horse historically has finished closer to the middle of the pack, it is most likely to continue to finish in the mid pack. The same inference can be applied to horses with poor placements. 
 
 
-### Add graph about days between rest
+### Days of Rest Between Races
+```{r}
+g10<-ggplot(perf,aes(x=average_placement, y=days_between))+
+  geom_count()+
+  ggtitle("Average Placement Before Race vs. Final Race Placing")+
+  xlab("Days of Rest Between Races")+
+  ylab("Final Placing")
+
+g10
+```
+
+
 
 
 ## Exporting data without outliers/discovered errors

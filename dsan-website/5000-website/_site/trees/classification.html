@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -185,7 +219,26 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#methods" id="toc-methods" class="nav-link active" data-scroll-target="#methods">Methods</a></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">Data Preparation</a>
+  <ul class="collapse">
+  <li><a href="#an-overview-of-the-distribution-of-podium" id="toc-an-overview-of-the-distribution-of-podium" class="nav-link" data-scroll-target="#an-overview-of-the-distribution-of-podium">An Overview of the Distribution of ‘podium’</a></li>
+  <li><a href="#making-a-random-classifier" id="toc-making-a-random-classifier" class="nav-link" data-scroll-target="#making-a-random-classifier">Making a Random Classifier</a></li>
+  <li><a href="#decision-tree" id="toc-decision-tree" class="nav-link" data-scroll-target="#decision-tree">Decision Tree</a>
+  <ul class="collapse">
+  <li><a href="#hyperparameter-tuning" id="toc-hyperparameter-tuning" class="nav-link" data-scroll-target="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
+  </ul></li>
+  <li><a href="#random-forest" id="toc-random-forest" class="nav-link" data-scroll-target="#random-forest">Random Forest</a></li>
+  <li><a href="#adaboost" id="toc-adaboost" class="nav-link" data-scroll-target="#adaboost">ADABoost</a></li>
+  <li><a href="#i-am-going-to-continue-to-polish-this-section-to-see-if-i-can-find-a-model-that-gives-me-a-precision-score-better-than-42" id="toc-i-am-going-to-continue-to-polish-this-section-to-see-if-i-can-find-a-model-that-gives-me-a-precision-score-better-than-42" class="nav-link" data-scroll-target="#i-am-going-to-continue-to-polish-this-section-to-see-if-i-can-find-a-model-that-gives-me-a-precision-score-better-than-42">I am going to continue to polish this section to see if I can find a model that gives me a precision score better than 42%</a></li>
+  </ul></li>
+  <li><a href="#final-results-and-conclusion" id="toc-final-results-and-conclusion" class="nav-link" data-scroll-target="#final-results-and-conclusion">Final Results and Conclusion</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -207,8 +260,828 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<section id="methods" class="level1">
+<h1>Methods</h1>
+<p>In this section, we will explore a variety of decision tree methods for classification, including a <strong>Decision Tree Classifier</strong>, <strong>Random Forests</strong>, <strong>AdaBoost Models</strong>, and <strong>Gradient Boosting</strong>, specifically XGBoost.</p>
+<p>A Decision Tree Classifier is a machine learning algorithm that recursively partitions the input space into regions, assigning a class label to each region. It begins with the entire dataset at the root node and selects the best feature and threshold to split the data into subsets, optimizing for homogeneity within each subset. This process is repeated at each node, creating a tree structure, until a stopping criterion is met. The resulting leaf nodes represent class labels, and predictions for new instances are made by traversing the tree from the root to an appropriate leaf, following the decision rules based on the feature values. Decision Trees are interpretable and versatile, making them valuable for both classification and regression tasks, though they can be prone to overfitting, which can be addressed through techniques like pruning and ensemble methods.</p>
+<p>A Random Forest is an ensemble learning method that builds multiple decision trees during training and outputs the mode of the classes for classification tasks or the average prediction for regression tasks. The “random” in Random Forest comes from introducing randomness both in the data and the features used to construct each individual tree. During training, each tree is built using a bootstrap sample (randomly sampled with replacement) from the original dataset, and at each node of the tree, a random subset of features is considered for the split. This randomness introduces diversity among the trees, preventing overfitting and enhancing the model’s robustness. The final prediction is then determined by aggregating the predictions of all the trees. Random Forests are known for their high accuracy, scalability, and ability to handle complex, high-dimensional datasets, making them a popular choice in various machine learning applications.</p>
+<p>AdaBoost, short for Adaptive Boosting, is an ensemble learning technique designed to improve the performance of weak classifiers and create a strong, accurate classifier. It operates by iteratively training a series of weak classifiers on different weighted versions of the training data, where weights are adjusted to focus on instances that the current classifier misclassifies. In each iteration, the algorithm assigns higher weights to misclassified instances, and the subsequent weak classifier is forced to prioritize the correct classification of these instances. The final prediction is made by combining the individual predictions of all weak classifiers through weighted majority voting. AdaBoost is particularly effective in handling imbalanced datasets and tends to generalize well, producing a robust model that performs well on diverse datasets and various types of weak classifiers.</p>
+<p>XGBoost, or Extreme Gradient Boosting, is a powerful and efficient gradient boosting framework that has gained popularity for its high performance in a variety of machine learning tasks. XGBoost enhances traditional gradient boosting by employing a regularization term in the objective function, which helps prevent overfitting. It is designed for both classification and regression problems and is known for its speed, scalability, and flexibility. XGBoost sequentially builds a series of decision trees, and at each iteration, it minimizes a combined objective function that includes both a loss function and a regularization term. The algorithm also incorporates features like tree pruning and parallel computing, making it computationally efficient. Additionally, XGBoost supports custom loss functions and provides tools for feature importance analysis, making it a versatile and widely used tool in machine learning competitions and real-world applications.</p>
+</section>
+<section id="data-preparation" class="level1">
+<h1>Data Preparation</h1>
+<p>In order to ensure we are accounting for differences in horse races in our performance dataset (i.e., race distance, going, track, course, etc.), we are going to be creating decision trees only for particular races. I do not want to create any sort of predicition model that tries to aggregate all races together for all distances, goings, tracks, etc.. While we may have found in our EDA section that variables such track going might not have THAT large of an effect on races of equivalent distances, I still want to air on the side of caution by only making decision trees for races of the same distance and exact same condition. It is through this strategy that we can more closely identify how our more significant variables like draw, average placement, days of rest, etc. drive how a horse will finish will a race. Because prediction is now at the center of our focus in this section, we want to make sure our race variables are as well-trimmed as they possibly can be.</p>
+<p>I am going to start by looking at the race distance that is most common in our dataset.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reading in our data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/perf.clean.no.error.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_96612/1857860733.py:2: DtypeWarning: Columns (10,18,25,26,27,28,29,30) have mixed types. Specify dtype option on import or set low_memory=False.
+  perf = pd.read_csv('../../../data/01-modified-data/perf.clean.no.error.csv')</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding most common distance</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>perf[<span class="st">'distance'</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>1200    54307
+1400    50633
+1650    40298
+1600    30907
+1800    26647
+1000    20216
+2000     7586
+1235     6067
+2200     4020
+1030     3445
+975      2645
+1575     2464
+1150     2400
+2230     1328
+2400     1231
+1900      957
+1050      835
+2050      281
+2450      267
+1100      208
+2250      202
+2100      144
+1170       35
+1799       12
+2300        4
+Name: distance, dtype: int64</code></pre>
+</div>
+</div>
+<p>We can see here that our distance of 1200m is the most common distance. We can also confirm with research about the HKJC that the 1200m race is indeed still one of the most popular track races being run today.</p>
+<p>Let’s go ahead and subset our data to only include races that are 1200m.</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>perf_clean <span class="op">=</span> perf[perf[<span class="st">'distance'</span>] <span class="op">==</span> <span class="dv">1200</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we will go ahead and check what the most common track type is at the 1200m track distance and subset based on this track type.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>perf_clean[<span class="st">'track'</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>Turf     41065
+AWT       7829
+Grass     5413
+Name: track, dtype: int64</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>perf_clean <span class="op">=</span> perf_clean[perf_clean[<span class="st">'track'</span>] <span class="op">==</span> <span class="st">'Turf'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s look at the most common course and subset based on said course.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>perf_clean[<span class="st">'course'</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>A         12424
+C          7805
+B          7313
+C+3        4855
+B+2        3716
+A+3        2444
+A(N)        716
+B(N)        584
+D           583
+A+2         438
+B+2(N)      139
+A+2(N)       37
+B+3          11
+Name: course, dtype: int64</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>perf_clean <span class="op">=</span> perf_clean[perf_clean[<span class="st">'course'</span>] <span class="op">==</span> <span class="st">'A'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Once again, we will subset the data, this time based on the class of the race (race class determines what range of horse ratings will be competing in the race).</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>perf_clean[<span class="st">'race_class'</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>4       4219
+3       3923
+5       1485
+2       1340
+1        385
+1&amp;2      279
+HKG1     165
+HKG3     148
+6        116
+G1        99
+P         64
+4S        62
+HKG2      58
+3S        23
+G2        23
+G3        18
+R          7
+4R         6
+23YO       4
+Name: race_class, dtype: int64</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>perf_clean <span class="op">=</span> perf_clean[perf_clean[<span class="st">'race_class'</span>] <span class="op">==</span> <span class="st">'4'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Just a couple more subsets to go! Lets go ahead and look at race going, the condition in which the race track was at the time of the race.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>perf_clean[<span class="st">'going'</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>G     2245
+GF    1457
+GY     351
+Y       86
+YS      35
+F       32
+S       13
+Name: going, dtype: int64</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>perf_clean <span class="op">=</span> perf_clean[perf_clean[<span class="st">'going'</span>] <span class="op">==</span> <span class="st">'G'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And last but not least, we will go ahead and subset based on if the race took place at Happy Valley or Sha Tin.</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>perf_clean[<span class="st">'race_location'</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>HV    1334
+ST     911
+Name: race_location, dtype: int64</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>perf_clean <span class="op">=</span> perf_clean[perf_clean[<span class="st">'race_location'</span>] <span class="op">==</span> <span class="st">'HV'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And finally, we have a dataset in which we will create some decision trees. You will see, we went all the way from 250k + observations, all the way to about 1300. Again, this “cut” might seem stark at first, but we are just looking at ONE possible race scenario. If we were to make a comprehensive, closer to “perfect” race predicition model, we would be making a decision tree for every possible cut of data (every possible race scenario). Obviously, creating decision trees, tuning hyperparameters, etc. for every possible race scenario would get computationally expensive. For the sake of this project, again, we are just looking at the race scenario that has happened the most at the HJKC.</p>
+<p>Now that we have our data for one possible race scenario, we will go ahead and create our target variable, ‘podium’.</p>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>perf_clean[<span class="st">'podium'</span>] <span class="op">=</span> np.nan</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>perf_clean[<span class="st">'podium'</span>] <span class="op">=</span> np.where(perf_clean[<span class="st">'final_placing'</span>].isin([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]), <span class="dv">1</span>, <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dropping rows where our feature set has NA values</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>perf_clean_na <span class="op">=</span> perf_clean.dropna(subset<span class="op">=</span>[<span class="st">'rating'</span>,<span class="st">'on_date_weight'</span>,<span class="st">'draw'</span>,<span class="st">'average_placement'</span>,<span class="st">'days_between'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>FINALLY, we will subset our data to include only our variables of interest. If you remember, we found an optimal numerical feature set in the PCA section. We will stick with this feature set for our decision tree analysis.</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating feature set and target variable</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> perf_clean_na[[<span class="st">'rating'</span>,<span class="st">'on_date_weight'</span>,<span class="st">'draw'</span>,<span class="st">'average_placement'</span>,<span class="st">'days_between'</span>]]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> perf_clean_na[<span class="st">'podium'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a training, validation, and test set</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>X_train, X_temp, y_train, y_temp <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>X_val, X_test, y_val, y_test <span class="op">=</span> train_test_split(X_temp, y_temp, test_size<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Our data is now fully prepared for our decision tree making process.</p>
+<section id="an-overview-of-the-distribution-of-podium" class="level2">
+<h2 class="anchored" data-anchor-id="an-overview-of-the-distribution-of-podium">An Overview of the Distribution of ‘podium’</h2>
+<p>Before we fully delve into making decision trees, let’s first take a look at the distribution of our target variable, ‘podium’.</p>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>y.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>0    976
+1    335
+Name: podium, dtype: int64</code></pre>
+</div>
+</div>
+<p>We can see that roughly a third of our data falls under the category of having a podium finish. Conceptually, this makes perfect sense since for all races, there will only be 3 podium finishers per race. What this means for any decision tree we make is that it will the decision tree might become biased towards the majority class, NOT podium finishing. Any imbalanced class distribution may lead to biased impurity measures, favoring the majority class, leading to overfitting and poor generalization.</p>
+<p>While this imbalance raises some concerns, we can mitigate this bias through techniques like class weighting (e.g., adaboost) which penalizes misclassifcations of the minority class more heavily or through ensenmble methods like using Random Forests, which build multiple descions trees and combine predicitions. We will explore such methods in the following sections.</p>
+</section>
+<section id="making-a-random-classifier" class="level2">
+<h2 class="anchored" data-anchor-id="making-a-random-classifier">Making a Random Classifier</h2>
+<p>We will first make a random classifier to serve as the “baseline” model for comparsion with any decision trees we make.</p>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> precision_recall_fscore_support</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> random_classifier(y_data):</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    ypred<span class="op">=</span>[]<span class="op">;</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    max_label<span class="op">=</span>np.<span class="bu">max</span>(y_data)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="bu">len</span>(y_data)):</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        ypred.append(<span class="bu">int</span>(np.floor((max_label<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>np.random.uniform(<span class="dv">0</span>,<span class="dv">1</span>))))</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"-----RANDOM CLASSIFIER-----"</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"count of prediction:"</span>,Counter(ypred).values()) <span class="co"># counts the elements' frequency</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"probability of prediction:"</span>,np.fromiter(Counter(ypred).values(), dtype<span class="op">=</span><span class="bu">float</span>)<span class="op">/</span><span class="bu">len</span>(y_data)) <span class="co"># counts the elements' frequency</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"accuracy"</span>,accuracy_score(y_data, ypred))</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"precision, recall, fscore,"</span>,precision_recall_fscore_support(y_data, ypred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>random_classifier(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-----RANDOM CLASSIFIER-----
+count of prediction: dict_values([666, 645])
+probability of prediction: [0.50800915 0.49199085]
+accuracy 0.4965675057208238
+precision, recall, fscore, (array([0.73723724, 0.24806202]), array([0.50307377, 0.47761194]), array([0.59805116, 0.32653061]), array([976, 335]))</code></pre>
+</div>
+</div>
+<p>We can see that with our random classifier, we have about a 50/50 shot at correctly predicting a podium finish for a horse. We want to beat this 50/50 shot at predicting whether a horse has a podium finish or not.</p>
+</section>
+<section id="decision-tree" class="level2">
+<h2 class="anchored" data-anchor-id="decision-tree">Decision Tree</h2>
+<p>Now we will go ahead and fit a decision tree based on the Gini index.</p>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix, ConfusionMatrixDisplay</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> tree</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> metrics</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We are going to define a function that is able to output scores for accuracy, recall, and precision, and F-1 score and also give us a confusion matrix.</p>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> confusion_plot(y_data,y_pred):</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    cm <span class="op">=</span> confusion_matrix(y_data,y_pred)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    disp.plot()</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    Accuracy <span class="op">=</span> metrics.accuracy_score(y_data, y_pred)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    Precision <span class="op">=</span> metrics.precision_score(y_data, y_pred)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    Sensitivity <span class="op">=</span> metrics.recall_score(y_data, y_pred)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    Specificity <span class="op">=</span> metrics.recall_score(y_data, y_pred,pos_label<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    NPV <span class="op">=</span> metrics.precision_score(y_data, y_pred,pos_label<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    F1 <span class="op">=</span> metrics.f1_score(y_data, y_pred)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Accuracy:"</span>,Accuracy)</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Specificity:"</span>,Specificity)</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Precision:"</span>, Precision)</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sensitivity"</span>,Sensitivity)</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Negative Predictive Value:"</span>,NPV)</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"F1-score:"</span>, F1 )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we will go ahead and fit a decision tree, looking at its performance on the test data before hyperparameter tuning.</p>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting the model</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tree.DecisionTreeClassifier()</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model.fit(X_train,y_train)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> model.predict(X_train)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAINING------"</span>)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_train,yp_train)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_test,yp_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------TRAINING------
+Accuracy: 1.0
+Specificity: 1.0
+Precision: 1.0
+Sensitivity 1.0
+Negative Predictive Value: 1.0
+F1-score: 1.0
+------TEST------
+Accuracy: 0.6294416243654822
+Specificity: 0.7671232876712328
+Precision: 0.2608695652173913
+Sensitivity 0.23529411764705882
+Negative Predictive Value: 0.7417218543046358
+F1-score: 0.24742268041237112</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-26-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-26-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<p>As we can see, as expected, our model is biased towards the majority class. Our decision tree with our training data likes to classify non podium finishers over true podium finishers, as expected. With our test data, we can see about a 63% accuracy and a really poor F-1 score of around 23%. The precision and sensitivity are really poor for this model, making this un-tuned decision tree not too great of a predictive model. Before we visualize our decision tree, let’s see if we can tune it.</p>
+<section id="hyperparameter-tuning" class="level3">
+<h3 class="anchored" data-anchor-id="hyperparameter-tuning">Hyperparameter Tuning</h3>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> precision_score</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> recall_score</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> f1_score</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>val_results<span class="op">=</span>[]</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>train_results<span class="op">=</span>[]</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> num_layer <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">20</span>):</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> tree.DecisionTreeClassifier(max_depth<span class="op">=</span>num_layer)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> model.fit(X_train,y_train)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    yp_train<span class="op">=</span>model.predict(X_train)</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    yp_val<span class="op">=</span>model.predict(X_val)</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print(y_pred.shape)</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    val_results.append([num_layer,accuracy_score(y_val, yp_val),f1_score(y_val, yp_val),precision_score(y_val, yp_val,zero_division<span class="op">=</span><span class="dv">0</span>),recall_score(y_val,yp_val)])</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>    train_results.append([num_layer, accuracy_score(y_train, yp_train), f1_score(y_train, yp_train),precision_score(y_train, yp_train,zero_division<span class="op">=</span><span class="dv">0</span>),recall_score(y_val,yp_val)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>val_results <span class="op">=</span> np.array(val_results)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>train_results <span class="op">=</span> np.array(train_results)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>num_layers <span class="op">=</span> val_results[:, <span class="dv">0</span>]</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>val_accuracy <span class="op">=</span> val_results[:, <span class="dv">1</span>]</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>val_f1 <span class="op">=</span> val_results[:, <span class="dv">2</span>]</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>val_precision <span class="op">=</span> val_results[:, <span class="dv">3</span>]</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>val_sensitivity <span class="op">=</span> val_results[:, <span class="dv">4</span>]</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>train_accuracy <span class="op">=</span> train_results[:, <span class="dv">1</span>]</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>train_f1 <span class="op">=</span> train_results[:, <span class="dv">2</span>]</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>train_precision <span class="op">=</span> train_results[:, <span class="dv">3</span>]</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>train_sensitivity <span class="op">=</span> train_results[:, <span class="dv">4</span>]</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">12</span>))</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Accuracy Plot</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, val_accuracy, label<span class="op">=</span><span class="st">'Validation Accuracy'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_accuracy, label<span class="op">=</span><span class="st">'Train Accuracy'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Accuracy vs Number of Layers'</span>)</span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers'</span>)</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Accuracy'</span>)</span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a><span class="co"># F-1 Score Plot</span></span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, val_f1, label<span class="op">=</span><span class="st">'Validation F-1 Score'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_f1, label<span class="op">=</span><span class="st">'Train F-1 Score'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'F-1 Score vs Number of Layers'</span>)</span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers'</span>)</span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'F-1 Score'</span>)</span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Precision Plot</span></span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">3</span>)</span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, val_precision, label<span class="op">=</span><span class="st">'Validation Precision'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_precision, label<span class="op">=</span><span class="st">'Train Precision'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Precision vs Number of Layers'</span>)</span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers'</span>)</span>
+<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Precision'</span>)</span>
+<span id="cb37-42"><a href="#cb37-42" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb37-43"><a href="#cb37-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-44"><a href="#cb37-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Sensitivity Plot</span></span>
+<span id="cb37-45"><a href="#cb37-45" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">4</span>)</span>
+<span id="cb37-46"><a href="#cb37-46" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, val_precision, label<span class="op">=</span><span class="st">'Validation Sensitivity'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb37-47"><a href="#cb37-47" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_precision, label<span class="op">=</span><span class="st">'Train Sensitivity'</span>, marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb37-48"><a href="#cb37-48" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Sensitivity vs Number of Layers'</span>)</span>
+<span id="cb37-49"><a href="#cb37-49" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers'</span>)</span>
+<span id="cb37-50"><a href="#cb37-50" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Sensitvity'</span>)</span>
+<span id="cb37-51"><a href="#cb37-51" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb37-52"><a href="#cb37-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-53"><a href="#cb37-53" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb37-54"><a href="#cb37-54" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-28-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>There are a few judgement calls we have to make here. One of the first observations we can make is that our precision, the ability of our classifier to correctly predict podium finishers, is much better than our random classifier for any max depth after 2 layers. Our primary goal of such a decision tree should be to maximize precision, since in a betting market, we want to maximize the probability that we correctly select a podium finisher.</p>
+<p>In terms of sensitivity, we also see a drop off after 3 layers. Sensitivity conveys to us our ability to pick podium finishers while taking into account horses we incorrectly said we would not finish on the podium. If we are able to maximize sensitivity, we are able to make sure we are not missing out on any betting opportunities. However, being right in a betting market is more important than missing out on opportunities, so we should still maximize precision</p>
+<p>We can also look at trying to get a balance between accuracy and F-1 score. F-1 score peaks at 5 layers and accuracy falls off immediately after 1 layer. F-1 score would be a metric worth optimizing if we wanted a model that balances maximizing betting opportunities and being correct in our picks, but again, we really just want to maximize correctly picking podium finishers, so precision should be our main concern. Thus, we are going to pick 3 as our max depth.</p>
+<p>Let’s go ahead and fit our model with our tuned hyperparameter, measure its effectiveness, and finally visualize the tree.</p>
+<div class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tree.DecisionTreeClassifier(max_depth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model.fit(X_train,y_train)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>yp_train<span class="op">=</span>model.predict(X_train)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>yp_test<span class="op">=</span>model.predict(X_test)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAINING------"</span>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_train,yp_train)</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_test,yp_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------TRAINING------
+Accuracy: 0.7568157033805889
+Specificity: 0.9912408759124087
+Precision: 0.7142857142857143
+Sensitivity 0.06465517241379311
+Negative Predictive Value: 0.7578125
+F1-score: 0.11857707509881424
+------TEST------
+Accuracy: 0.7309644670050761
+Specificity: 0.9726027397260274
+Precision: 0.3333333333333333
+Sensitivity 0.0392156862745098
+Negative Predictive Value: 0.743455497382199
+F1-score: 0.07017543859649122</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-29-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-29-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<p>With this decision tree. There are a few things of which to take note. We are maximizing precision, so our F-1 score is BAD. Our Accuracy is fairly solid, showing that we are able to weed out a lot of the non podium finishers fairly well. We are missing out on some betting opportunities by having a low sensitivity, but doing such ensures we are not making a lot of bets on podium finishers that are not. Overall, this decision tree would be a very ineffective predicition model in practice as the precision really could be tuned much more, which we will do in following sections. We will go ahead and visualize our decision tree.</p>
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>class_names <span class="op">=</span> y.unique()</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> [<span class="bu">str</span>(col) <span class="cf">for</span> col <span class="kw">in</span> X.columns]</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">25</span>,<span class="dv">20</span>))</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>tree.plot_tree(model, </span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>                feature_names<span class="op">=</span>feature_names,  </span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>                class_names<span class="op">=</span>[<span class="bu">str</span>(class_name) <span class="cf">for</span> class_name <span class="kw">in</span> class_names],</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>                filled<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-30-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="random-forest" class="level2">
+<h2 class="anchored" data-anchor-id="random-forest">Random Forest</h2>
+<p>We will begin by first fitting an untuned random forest model to our training data and then measuring its classification effectiveness before tuning hyperparameters. First, let’s make sure there are no NaN values in our feature set as our Random Forest Classifier will not be able to handle them.</p>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>rf_classifier <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>rf_classifier <span class="op">=</span> rf_classifier.fit(X_train,y_train)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> rf_classifier.predict(X_train)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> rf_classifier.predict(X_test)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> rf_classifier.predict(X_train)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> rf_classifier.predict(X_test)</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAINING------"</span>)</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_train,yp_train)</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_test,yp_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------TRAINING------
+Accuracy: 1.0
+Specificity: 1.0
+Precision: 1.0
+Sensitivity 1.0
+Negative Predictive Value: 1.0
+F1-score: 1.0
+------TEST------
+Accuracy: 0.7106598984771574
+Specificity: 0.9041095890410958
+Precision: 0.36363636363636365
+Sensitivity 0.1568627450980392
+Negative Predictive Value: 0.7542857142857143
+F1-score: 0.21917808219178084</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-32-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-32-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We can already see that an un-tuned random forest is giving us way higher precision than any of our previous decision trees, and most importantly, our random classifier (by around 10%). Still, we would like to tune this precision to be much higher.</p>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> RandomizedSearchCV</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> randint</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>rf_classifier <span class="op">=</span> RandomForestClassifier(random_state<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the hyperparameters and their distributions</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>param_dist <span class="op">=</span> {</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'n_estimators'</span>: randint(<span class="dv">50</span>, <span class="dv">200</span>),</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'max_depth'</span>: [<span class="va">None</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>],</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'min_samples_split'</span>: randint(<span class="dv">2</span>, <span class="dv">11</span>),</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'min_samples_leaf'</span>: randint(<span class="dv">1</span>, <span class="dv">5</span>)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Use RandomizedSearchCV to find the best hyperparameters based on precision</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>random_search <span class="op">=</span> RandomizedSearchCV(</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>    rf_classifier, param_distributions<span class="op">=</span>param_dist, n_iter<span class="op">=</span><span class="dv">50</span>, scoring<span class="op">=</span><span class="st">'precision'</span>, cv<span class="op">=</span><span class="dv">5</span>, random_state<span class="op">=</span><span class="dv">42</span>, n_jobs<span class="op">=-</span><span class="dv">1</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>random_search.fit(X_train, y_train)</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the best parameters and best estimator</span></span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>best_params <span class="op">=</span> random_search.best_params_</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>best_rf_classifier <span class="op">=</span> random_search.best_estimator_</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> best_rf_classifier.predict(X_train)</span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> best_rf_classifier.predict(X_test)</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> best_rf_classifier.predict(X_train)</span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> best_rf_classifier.predict(X_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAINING------"</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_train,yp_train)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_test,yp_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------TRAINING------
+Accuracy: 0.8844056706652127
+Specificity: 0.9941605839416059
+Precision: 0.9701492537313433
+Sensitivity 0.5603448275862069
+Negative Predictive Value: 0.8697318007662835
+F1-score: 0.7103825136612022
+------TEST------
+Accuracy: 0.7258883248730964
+Specificity: 0.9383561643835616
+Precision: 0.4
+Sensitivity 0.11764705882352941
+Negative Predictive Value: 0.7527472527472527
+F1-score: 0.1818181818181818</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-34-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-34-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Now, we can see that our Random Forest is giving us the highest precision we have seen on our test data yet with a precision of 40%, about 15% higher than a random classifer. Certainly, now, we are starting to get a predictive model that is able to give us betting winners at a more successful rate. Still, in a perfect world, we would have a model that when it tells us a horse is going to finish on the podium, it be would be right AT LEAST more than half of the time. Now, having a precision score of 40% is not useless (which I will touch on later), but, ideally, we could still improve on it.</p>
+</section>
+<section id="adaboost" class="level2">
+<h2 class="anchored" data-anchor-id="adaboost">ADABoost</h2>
+<p>Now we will try boosting, specifically adaptive boosting through sklearn’s ADABoostClassifier function. Let’s fit an initial model before tuning it.</p>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> AdaBoostClassifier</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>ada_classifier <span class="op">=</span> AdaBoostClassifier(random_state<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>ada_classifier <span class="op">=</span> ada_classifier.fit(X_train,y_train)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> ada_classifier.predict(X_train)</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> ada_classifier.predict(X_test)</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAINING------"</span>)</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_train,yp_train)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_test,yp_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------TRAINING------
+Accuracy: 0.7742639040348964
+Specificity: 0.9503649635036496
+Precision: 0.6344086021505376
+Sensitivity 0.2543103448275862
+Negative Predictive Value: 0.7900485436893204
+F1-score: 0.363076923076923
+------TEST------
+Accuracy: 0.7258883248730964
+Specificity: 0.9246575342465754
+Precision: 0.42105263157894735
+Sensitivity 0.1568627450980392
+Negative Predictive Value: 0.7584269662921348
+F1-score: 0.22857142857142856</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-35-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-35-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<p>ALREADY, through an untuned adaboost model, we have a precision score of about 42% which is higher than any tuned model we have created so far. Now let’s see what happens when we tune the model.</p>
+<div class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>ada_classifier <span class="op">=</span> AdaBoostClassifier(random_state<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>param_grid <span class="op">=</span> {</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'n_estimators'</span>: [<span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">150</span>],</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'learning_rate'</span>: [<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>]</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Use GridSearchCV to find the best hyperparameters based on precision</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>grid_search <span class="op">=</span> GridSearchCV(</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    ada_classifier, param_grid, scoring<span class="op">=</span><span class="st">'precision'</span>, cv<span class="op">=</span><span class="dv">5</span>, n_jobs<span class="op">=-</span><span class="dv">1</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the grid search to the training data</span></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>grid_search.fit(X_train, y_train)</span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the best parameters and best estimator</span></span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>best_params <span class="op">=</span> grid_search.best_params_</span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>best_ada_classifier <span class="op">=</span> grid_search.best_estimator_</span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions on the validation set using the best model</span></span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>y_val_pred <span class="op">=</span> best_ada_classifier.predict(X_val)</span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate precision on the validation set</span></span>
+<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a>precision_val <span class="op">=</span> precision_score(y_val, y_val_pred)</span>
+<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Best Parameters: </span><span class="sc">{</span>best_params<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Precision on Validation Set: </span><span class="sc">{</span>precision_val<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+/home/mcarswell/anaconda3/lib/python3.11/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Best Parameters: {'learning_rate': 0.1, 'n_estimators': 50}
+Precision on Validation Set: 0.6666666666666666</code></pre>
+</div>
+</div>
+<p>When testing our tuned model on our validation set, we get a precision of 66.7% which is fantastic! Let’s test this model on our test set to see if generalizes well to another unseen data set.</p>
+<div class="cell" data-execution_count="193">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> best_ada_classifier.predict(X_test)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> best_ada_classifier.predict(X_train)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAINING------"</span>)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_train,yp_train)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_test,yp_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------TRAINING------
+Accuracy: 0.7655398037077427
+Specificity: 0.9897810218978103
+Precision: 0.7741935483870968
+Sensitivity 0.10344827586206896
+Negative Predictive Value: 0.7652370203160271
+F1-score: 0.18250950570342206
+------TEST------
+Accuracy: 0.7258883248730964
+Specificity: 0.9657534246575342
+Precision: 0.2857142857142857
+Sensitivity 0.0392156862745098
+Negative Predictive Value: 0.7421052631578947
+F1-score: 0.06896551724137931</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-37-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-37-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Uh oh. Unfortunately, while while our tuning process worked out really well with our validation dataset, it performed very poorly on our test set. Such phenomena might be a sign we are overfitting our model to our training data. This overfitting can easily be a symptom of having an imbalanced dataset. Let’s re-try this process, but this time, performing random oversampling in order to combat the imbalance of classes in our dataset.</p>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> imblearn.over_sampling <span class="im">import</span> SMOTE</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming X_train, y_train are your training data</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>oversampler <span class="op">=</span> SMOTE(sampling_strategy<span class="op">=</span><span class="st">'auto'</span>, random_state<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>X_train_resampled, y_train_resampled <span class="op">=</span> oversampler.fit_resample(X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="72">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> VotingClassifier</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>base_classifier <span class="op">=</span> DecisionTreeClassifier()</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Define different base classifiers</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>base_classifier_adaboost <span class="op">=</span> AdaBoostClassifier(base_classifier, n_estimators<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>base_classifier_random_forest <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an ensemble with different base classifiers</span></span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>ensemble_model <span class="op">=</span> VotingClassifier(</span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>    estimators<span class="op">=</span>[(<span class="st">'adaboost'</span>, base_classifier_adaboost), (<span class="st">'random_forest'</span>, base_classifier_random_forest)],</span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>    voting<span class="op">=</span><span class="st">'soft'</span>  <span class="co"># 'soft' for probability voting</span></span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the ensemble model</span></span>
+<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a>ensemble_classifier <span class="op">=</span> ensemble_model.fit(X_train_resampled, y_train_resampled)</span>
+<span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> ensemble_classifier.predict(X_train_resampled)</span>
+<span id="cb54-20"><a href="#cb54-20" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> ensemble_classifier.predict(X_test)</span>
+<span id="cb54-21"><a href="#cb54-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-22"><a href="#cb54-22" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> ensemble_classifier.predict(X_train_resampled)</span>
+<span id="cb54-23"><a href="#cb54-23" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> ensemble_classifier.predict(X_test)</span>
+<span id="cb54-24"><a href="#cb54-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-25"><a href="#cb54-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAINING------"</span>)</span>
+<span id="cb54-26"><a href="#cb54-26" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_train_resampled,yp_train)</span>
+<span id="cb54-27"><a href="#cb54-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb54-28"><a href="#cb54-28" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_test,yp_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------TRAINING------
+Accuracy: 1.0
+Specificity: 1.0
+Precision: 1.0
+Sensitivity 1.0
+Negative Predictive Value: 1.0
+F1-score: 1.0
+------TEST------
+Accuracy: 0.6192893401015228
+Specificity: 0.6712328767123288
+Precision: 0.3333333333333333
+Sensitivity 0.47058823529411764
+Negative Predictive Value: 0.784
+F1-score: 0.39024390243902435</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-39-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-39-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="71">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> xgboost <span class="im">import</span> XGBClassifier</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the XGBoost model</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>xgb_model <span class="op">=</span> XGBClassifier()</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model on the resampled data</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>xgb <span class="op">=</span> xgb_model.fit(X_train_resampled, y_train_resampled)</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> xgb.predict(X_train_resampled)</span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> xgb.predict(X_test)</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> xgb.predict(X_train_resampled)</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> xgb.predict(X_test)</span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAINING------"</span>)</span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_train_resampled,yp_train)</span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_test,yp_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------TRAINING------
+Accuracy: 0.997080291970803
+Specificity: 0.9956204379562044
+Precision: 0.9956331877729258
+Sensitivity 0.9985401459854014
+Negative Predictive Value: 0.9985358711566618
+F1-score: 0.9970845481049562
+------TEST------
+Accuracy: 0.6903553299492385
+Specificity: 0.7671232876712328
+Precision: 0.41379310344827586
+Sensitivity 0.47058823529411764
+Negative Predictive Value: 0.8057553956834532
+F1-score: 0.4403669724770642</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-40-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-40-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>y_probabilities <span class="op">=</span> xgb.predict_proba(X_test)[:, <span class="dv">1</span>]</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>y_pred_adjusted <span class="op">=</span> (y_probabilities <span class="op">&gt;</span> <span class="fl">0.9</span>)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAINING------"</span>)</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_train,yp_train)</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>confusion_plot(y_test,y_pred_adjusted)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------TRAINING------
+Accuracy: 0.9956379498364231
+Specificity: 0.9956204379562044
+Precision: 0.9871794871794872
+Sensitivity 0.9956896551724138
+Negative Predictive Value: 0.9985358711566618
+F1-score: 0.9914163090128757
+------TEST------
+Accuracy: 0.7157360406091371
+Specificity: 0.9246575342465754
+Precision: 0.35294117647058826
+Sensitivity 0.11764705882352941
+Negative Predictive Value: 0.75
+F1-score: 0.17647058823529413</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-41-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="classification_files/figure-html/cell-41-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="i-am-going-to-continue-to-polish-this-section-to-see-if-i-can-find-a-model-that-gives-me-a-precision-score-better-than-42" class="level2">
+<h2 class="anchored" data-anchor-id="i-am-going-to-continue-to-polish-this-section-to-see-if-i-can-find-a-model-that-gives-me-a-precision-score-better-than-42">I am going to continue to polish this section to see if I can find a model that gives me a precision score better than 42%</h2>
+</section>
+</section>
+<section id="final-results-and-conclusion" class="level1">
+<h1>Final Results and Conclusion</h1>
+<p>Our final model, our <em>AdaBoost Classifier Model</em> (<strong>will have to replace this at the end according to what model I get that is the best</strong>), was found to be our “best” model during this analysis. To re-iterate, the goal of this analysis was to develop a decision tree-based classifier model that is able to maximize precision as much as possible relative to a random classifier (which, on average, will give us precision of 25%). The reasoning for wanting to maximize precision over any of the other models is that precision tells us out of all the horse podium finishers we are predicting, we are predicting X percentage correct. In the betting world, being right is what makes you money. Measures like accuracy and negative predictive value, which help tell us how well our model is predicting horses that do NOT finish on the podium, are not helpful to us in a betting scenario. With a measure like sensitivity (recall), we are quantifying out of all the possible podium finishers, we are succesfully predicting X percentage of the total podium finisher pool. This measure is not totally unhelpful as it tells us the extent to which we are maximizing potential betting opportunities, but for the sake of this analysis, we care more about being right than maximizing potential betting opportunities, hence precision was our measure of interest for evaluating all of our models.</p>
+<p>With our final model, we are able to get a precision of around 42%, about 17% higher than a random classifier. On the surface, this improvement might not seem like a lot, but it actually is quite meaningful. First of all, if you have a model with a super high precision score of anwyhere above around 80%, you might want to consider moving out to Hong Kong and picking up horse handicapping as a full-time job. Having such precision in picking horse podium finishers is something that many handicappers have committed their entire practice towards. What I am trying to say is that getting a super precision score with a model would be HARD. It is definitely possible, but more feature sets and advanced algorithims are likely needed. Secondly, 42% precision is NOT bad. In fact, it is more than enough to gain an edge if one were to use this model as a part of a more advanced betting system.</p>
+<p>If we are able to fully confirm over more unseen data that our precision truly is around 42%, we know that any time our model tells us that a horse is going to finish on the podium (for the exact same race scenario in which we built our model), then 42% of the time, we are going to be right. Knowing probabilities of outcomes is one of the first steps to developing a more advanced betting system.</p>
+<p>If we are given odds of anything 3:2 or better (+150 in American Odds) on a horse finishing on the podium and our model tells us the horse is going to finish on the podium, we can place a bet on the horse finishing on the podium and we will be placing what is known as a Positive Expected Value (EV) bet.With odds of 3 to 2, there are implied odds of 40% that the horse finishes on the podium. If we know our model is right 42% of the time and we are getting paid out like this outcome only happens 40% of the time, we have an edge. If we place a $100 bet on our horse, applying “betting math”, we can expect a 5% return over the long run on such an event. Meaning, if we were to place 1000 of these bets over the long run, we can expect a profit of $5. This phenomena is the crux of how one becomes a succesfull sports handicapper.</p>
+<p>Now, if we place a lot of these positive EV bets, you can probably see how OVER THE LONG RUN, some serious profit could be made. Again, assuming we are confident about our model’s precision, along with an appropriate bet sizing system (like the Kelly Criterion), this model could produce some succesful results. Before you go and try to use this model or replicate these results, there are some important caveats of which one should make note. For one, one would need to have one of there decision tree models for EVERY SINGLE RACE SCENARIO in order to make such a betting venture even worthwhile. This means having a model for races of every distance, class, track condition, race location, and course. This is an operation that would get computationally expensive really quickly. Also, due to the fact we maximized precision over recall, the amount of betting opportunities our model would give us would likely be very minimal, meaning for every 300-500 races, you are probably only going to get 10 podium horses MAX that your model spits out. Due to these reasons, this project is simply an exploration of some the preliminary work that would go into making a more advanced betting system.</p>
+<p>To summarize, our model, in theory, could be used to be a succesful horse racing handicapper (succesful meaning that we mathematically will not lose over the long run), but it would not perform well in practice due to its simplicity. If we were able to develop decision trees for every race scenario, with even higher precision, then maybe using the model to bet on the horses would become worthwhile. For now, that is not the case. It is very assuring, however, to see that we were able to develop the early beginnings of a mathematically profitable horse racing betting system.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
