@@ -168,7 +168,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC using Multinomial Naive Bayes</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -185,24 +185,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
+    <a class="nav-link" href="../trees/classification.html" rel="" target="">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-trees" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">Decision Trees</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-trees">    
-        <li>
-    <a class="dropdown-item" href="../trees/classification.html" rel="" target="">
- <span class="dropdown-text">Classification Trees</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../trees/regression.html" rel="" target="">
- <span class="dropdown-text">Regression</span></a>
-  </li>  
-    </ul>
-  </li>
+  <li class="dropdown-header">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></li>
   <li class="nav-item">
     <a class="nav-link" href="../conclusions/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
@@ -230,7 +217,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#analysis-of-principal-components" id="toc-analysis-of-principal-components" class="nav-link" data-scroll-target="#analysis-of-principal-components">Analysis of Principal Components</a></li>
   </ul></li>
   <li><a href="#multiple-correspondence-analysis" id="toc-multiple-correspondence-analysis" class="nav-link" data-scroll-target="#multiple-correspondence-analysis">Multiple Correspondence Analysis</a></li>
-  <li><a href="#t-distributed-stochastic-neighbor-embeddint-t-sne" id="toc-t-distributed-stochastic-neighbor-embeddint-t-sne" class="nav-link" data-scroll-target="#t-distributed-stochastic-neighbor-embeddint-t-sne">T-distributed Stochastic Neighbor Embeddint (t-SNE)</a></li>
+  <li><a href="#t-distributed-stochastic-neighbor-embedding-t-sne" id="toc-t-distributed-stochastic-neighbor-embedding-t-sne" class="nav-link" data-scroll-target="#t-distributed-stochastic-neighbor-embedding-t-sne">T-distributed Stochastic Neighbor Embedding (t-SNE)</a></li>
   <li><a href="#comparisons-and-conclusions" id="toc-comparisons-and-conclusions" class="nav-link" data-scroll-target="#comparisons-and-conclusions">Comparisons and Conclusions</a></li>
   </ul>
 </nav>
@@ -257,7 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="objective" class="level1">
 <h1>Objective</h1>
-<p>The objective of this section will be to try and reduce the number of features in our dataset while simultaneously retaining as much information as possible. Our exploration into dimensionality reduction will serve as the basis for further machine learning algorithims in this project by helping us spot “irrelevant” and/or redundant features in our data. We will be performing two seperate dimensionality reduction analyses with a set of numerical features and also categorical features. The bulk of analysis in this section will be completed using scikit-learn package.</p>
+<p>The objective of this section will be to try and reduce the number of features in our dataset while simultaneously retaining as much information as possible. Our exploration into dimensionality reduction will serve as the basis for further machine learning algorithims in this project by helping us spot “irrelevant” and/or redundant features in our data. We will be performing two seperate dimensionality reduction analyses with a set of numerical features and also categorical features. The bulk of analysis in this section will be completed using scikit-learn package under Python.</p>
 </section>
 <section id="principal-component-analysis-pca" class="level1">
 <h1>Principal Component Analysis (PCA)</h1>
@@ -409,8 +396,8 @@ Eigenvectors:
 <h1>Multiple Correspondence Analysis</h1>
 <p>I will complete this section at a later time, but I want to use MCA to explore categorical variables. For the sake of time in the completion of Homework 4, I will tackle this later.</p>
 </section>
-<section id="t-distributed-stochastic-neighbor-embeddint-t-sne" class="level1">
-<h1>T-distributed Stochastic Neighbor Embeddint (t-SNE)</h1>
+<section id="t-distributed-stochastic-neighbor-embedding-t-sne" class="level1">
+<h1>T-distributed Stochastic Neighbor Embedding (t-SNE)</h1>
 <p><em>Adapted from <a href="https://distill.pub/2016/misread-tsne/">“How to Use t-SNE Effectively”</a></em></p>
 <p>t-SNE is a method for visualizing high-dimensional data in a low-dimensional space. The main tuneable parameter of t-SNE is “perplexity” which essentially guides us on how much attention to pay attention to the local and global characteristics of our data. For datasets that are larger (like our dataset), larger perplexity values are needed (50+). We will take a look at our data with a wide range of perplexity values.</p>
 <div class="cell" data-execution_count="26">
@@ -447,7 +434,7 @@ Eigenvectors:
 <section id="comparisons-and-conclusions" class="level1">
 <h1>Comparisons and Conclusions</h1>
 <p>Overall, through PCA and t-SNE, we are able to garner a few major takeawawys. For one, despite the linear assumptions PCA uses, t-SNE tells us that these assumptions of linearity might not neccesarily be true for our data. Our data truly might be uniformly distributed, making assumptions of linearity somewhat moot when performing PCA, meaning that PCA might not be reliably selecting orthogonal directions that capture maximum variance (aka our eigenvectors). Despite this caveat, it should be said that t-SNE does show deviations from a completely and truly uniform distributed set of spatial data, allowing us to assume there is some variance at play within our dataset that can be analyzed through PCA.</p>
-<p>When we use PCA, looking at the first five principal components, we do see that that we have some features that are better at explaining the variance of our data, with horse rating and days of rest between races being the most significant of our variables. Draw and average placement came out to be our next most “important” variables, with the rest of the variables, excpet for actual weight, also showing some sort of significant explanation of the variance in the feature set.</p>
+<p>When we use PCA, looking at the first five principal components, we do see that that we have some features that are better at explaining the variance of our data, with horse rating and days of rest between races being the most significant of our variables. Draw and average placement came out to be our next most “important” variables, with the rest of the variables, except for actual weight, also showing some sort of significant explanation of the variance in the feature set.</p>
 <p>It is with all these takeaways that we are able to establish some statistically sound explanations of patterns in our data and what variables most heavily dictate a horse’s performance. We will begin to use this information in the next section, Clustering, to help us interpret results from various clustering algorithims.</p>
 
 

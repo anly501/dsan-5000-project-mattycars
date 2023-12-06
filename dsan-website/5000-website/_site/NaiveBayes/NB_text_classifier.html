@@ -93,6 +93,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -168,7 +171,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC using Multinomial Naive Bayes</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -185,24 +188,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
+    <a class="nav-link" href="../trees/classification.html" rel="" target="">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-trees" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">Decision Trees</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-trees">    
-        <li>
-    <a class="dropdown-item" href="../trees/classification.html" rel="" target="">
- <span class="dropdown-text">Classification Trees</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../trees/regression.html" rel="" target="">
- <span class="dropdown-text">Regression</span></a>
-  </li>  
-    </ul>
-  </li>
+  <li class="dropdown-header">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></li>
   <li class="nav-item">
     <a class="nav-link" href="../conclusions/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
@@ -223,10 +213,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#split-data" id="toc-split-data" class="nav-link active" data-scroll-target="#split-data">Split data</a></li>
+  <li><a href="#creating-a-sentiment-classifier" id="toc-creating-a-sentiment-classifier" class="nav-link active" data-scroll-target="#creating-a-sentiment-classifier">Creating a Sentiment Classifier</a>
+  <ul class="collapse">
   <li><a href="#feature-selection" id="toc-feature-selection" class="nav-link" data-scroll-target="#feature-selection">Feature Selection</a></li>
   <li><a href="#fitting-a-final-optimal-nb-model" id="toc-fitting-a-final-optimal-nb-model" class="nav-link" data-scroll-target="#fitting-a-final-optimal-nb-model">Fitting a Final, “Optimal” NB Model</a></li>
+  </ul></li>
+  <li><a href="#testing-our-classifier-on-hjkc-tweets" id="toc-testing-our-classifier-on-hjkc-tweets" class="nav-link" data-scroll-target="#testing-our-classifier-on-hjkc-tweets">Testing our Classifier on HJKC Tweets</a>
+  <ul class="collapse">
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -251,7 +246,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>In this section, we will be using our text data to create a Naive Bayes text classification model that predicts the sentiment behind individual tweets. Analyzing tweet sentiment is valuable in that it will allow us to look at tweets related to specific races, horses, courses, etc., in order to more succesfully pin down why betting odds are moving the way they are within HKJC’s parimutel betting market. Public betting is the sole factor that goes into the generation of odds on horse racing outcomes, so having a model that is able to analyze public perception surrouning HJKC horse racing will allow us to more succesfully pin down why certain horses are seeing various odds movements and insight to how we should we be making our own decisions behind betting horse winners.</p>
-<div class="cell" data-execution_count="1">
+<p>This section will be completed using Python.</p>
+<section id="creating-a-sentiment-classifier" class="level1">
+<h1>Creating a Sentiment Classifier</h1>
+<div class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -269,312 +267,129 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.sparse <span class="im">import</span> csr_matrix</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.sparse <span class="im">import</span> csr_array</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/00-raw-data/Tweets.csv'</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df_subset <span class="op">=</span> df[[<span class="st">'text'</span>,<span class="st">'sentiment'</span>]]</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df_subset <span class="op">=</span> df_subset.dropna()</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>df_subset <span class="op">=</span> df_subset.reset_index(drop<span class="op">=</span><span class="va">True</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Reading in our data.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array(pd.read_csv(<span class="st">"../../../data/01-modified-data/tweet.csv"</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array(pd.read_csv(<span class="st">"../../../data/01-modified-data/sentiment.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_subset.shape)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_subset.columns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>(27480, 2)
-Index(['text', 'sentiment'], dtype='object')</code></pre>
-</div>
-</div>
+<p>We will now split our data into a training, validation, and test set.</p>
 <div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tweets<span class="op">=</span>[]</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>y<span class="op">=</span>[]</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#ITERATE OVER ROWS</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># for i in range(0,10):  </span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="bu">len</span>(df_subset)):</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># QUICKLY CLEAN TEXT</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    keep<span class="op">=</span><span class="st">"abcdefghijklmnopqrstuvwxyz "</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    replace<span class="op">=</span><span class="st">".,!;"</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    tmp<span class="op">=</span><span class="st">""</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> char <span class="kw">in</span> df_subset[<span class="st">"text"</span>][i].replace(<span class="st">"&lt;br /&gt;"</span>,<span class="st">""</span>).lower():</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> char <span class="kw">in</span> replace:</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            tmp<span class="op">+=</span><span class="st">" "</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> char <span class="kw">in</span> keep:</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            tmp<span class="op">+=</span>char</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    tmp<span class="op">=</span><span class="st">" "</span>.join(tmp.split())</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    tweets.append(tmp)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># CONVERT STRINGS TO INT TAGS</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(df_subset[<span class="st">"sentiment"</span>][i]<span class="op">==</span><span class="st">"positive"</span>):</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        y.append(<span class="dv">1</span>)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(df_subset[<span class="st">"sentiment"</span>][i]<span class="op">==</span><span class="st">"negative"</span>):</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        y.append(<span class="dv">0</span>)</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(df_subset[<span class="st">"sentiment"</span>][i]<span class="op">==</span><span class="st">"neutral"</span>):</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        y.append(<span class="dv">2</span>)</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">#PRINT FIRST COUPLE REVIEWS</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i<span class="op">&lt;</span><span class="dv">3</span>):</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(i)</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(df_subset[<span class="st">"text"</span>][i].replace(<span class="st">"&lt;br /&gt;"</span>,<span class="st">""</span>),<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(tmp)</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span>x.shape[<span class="dv">0</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>l <span class="op">=</span> [<span class="op">*</span><span class="bu">range</span>(N)]     <span class="co"># indices</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>cut <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.8</span> <span class="op">*</span> N) <span class="co">#80% of the list</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>cut2 <span class="op">=</span> <span class="bu">int</span>((N <span class="op">-</span> cut)<span class="op">/</span><span class="dv">2</span> <span class="op">+</span> cut)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>random.shuffle(l)   <span class="co"># randomize</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>train_index <span class="op">=</span> l[:cut] <span class="co"># first 80% of shuffled list</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>validate_index <span class="op">=</span> l[cut:cut2] <span class="co"># 10% of shuffled list</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>test_index <span class="op">=</span> l[cut2:] <span class="co"># 10% of shuffled list</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(train_index[<span class="dv">0</span>:<span class="dv">10</span>])</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(validate_index[<span class="dv">0</span>:<span class="dv">10</span>])</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(test_index[<span class="dv">0</span>:<span class="dv">10</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0
- I`d have responded, if I were going 
-
-id have responded if i were going
-1
- Sooo SAD I will miss you here in San Diego!!! 
-
-sooo sad i will miss you here in san diego
-2
-my boss is bullying me... 
-
-my boss is bullying me</code></pre>
+<pre><code>[13411, 22009, 8006, 21057, 6941, 13517, 17470, 19809, 14337, 4075]
+[25334, 5091, 1614, 3412, 24419, 6923, 20932, 15542, 25584, 11058]
+[4600, 688, 22928, 7036, 5157, 10458, 5064, 24421, 25429, 14152]</code></pre>
 </div>
 </div>
+<p>We will now define a function that trains a Multinomial Naive Bayes classifier. We will test our function with our train and test data.</p>
 <div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#DOUBLE CHECK SIZE</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y<span class="op">=</span>np.array(y)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(tweets),<span class="bu">len</span>(y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>27480 27480</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I will add this to data cleaning section later</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># I have to do 1000 features, nothing too much more, otherwise my kernel crashes</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> CountVectorizer</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>vectorizer<span class="op">=</span>CountVectorizer(max_features<span class="op">=</span><span class="dv">1000</span>,stop_words<span class="op">=</span><span class="st">"english"</span>)    </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>Xs  <span class="op">=</span>  vectorizer.fit_transform(tweets)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#CONVERT TO ONE-HOT VECTORS (can also be done with binary=true in CountVectorizer)</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>X<span class="op">=</span>np.array(Xs.todense())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>maxs<span class="op">=</span>np.<span class="bu">max</span>(X,axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.ceil(X<span class="op">/</span>maxs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>vocab0 <span class="op">=</span> vectorizer.vocabulary_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x.shape,y.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>(27480, 1000) (27480,)</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#swap keys and values (value --&gt; ley)</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>vocab1 <span class="op">=</span> <span class="bu">dict</span>([(value, key) <span class="cf">for</span> key, value <span class="kw">in</span> vocab0.items()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CHECK VOCAB KEY-VALUE PAIRS</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">list</span>(vocab1.keys())[<span class="dv">0</span>:<span class="dv">10</span>])</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">list</span>(vocab1.values())[<span class="dv">0</span>:<span class="dv">10</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[422, 331, 773, 708, 555, 434, 476, 81, 411, 60]
-['id', 'going', 'sooo', 'sad', 'miss', 'interview', 'leave', 'bought', 'httpwww', 'best']</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#RE-ORDER COLUMN SO IT IS SORTED FROM HIGH FREQ TERMS TO LOW </span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>df2<span class="op">=</span>pd.DataFrame(x)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> df2.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>df2<span class="op">=</span>df2[s.sort_values(ascending<span class="op">=</span><span class="va">False</span>).index[:]]</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df2.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   426  451  192  334  484  213  856  512  961  331  ...  535  498  659  407  \
-0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  1.0  ...  0.0  0.0  0.0  0.0   
-1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.0   
-2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.0   
-3  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.0   
-4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.0   
-
-   429  87   190  558  893  168  
-0  0.0  0.0  0.0  0.0  0.0  0.0  
-1  0.0  0.0  0.0  0.0  0.0  0.0  
-2  0.0  0.0  0.0  0.0  0.0  0.0  
-3  0.0  0.0  0.0  0.0  0.0  0.0  
-4  0.0  0.0  0.0  0.0  0.0  0.0  
-
-[5 rows x 1000 columns]</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># RENAME COLUMNS 0,1,2,3 .. </span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>df2.columns <span class="op">=</span> <span class="bu">range</span>(df2.columns.size)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df2.head())</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df2.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>))</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span>df2.to_numpy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   0    1    2    3    4    5    6    7    8    9    ...  990  991  992  993  \
-0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  1.0  ...  0.0  0.0  0.0  0.0   
-1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.0   
-2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.0   
-3  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.0   
-4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.0   
-
-   994  995  996  997  998  999  
-0  0.0  0.0  0.0  0.0  0.0  0.0  
-1  0.0  0.0  0.0  0.0  0.0  0.0  
-2  0.0  0.0  0.0  0.0  0.0  0.0  
-3  0.0  0.0  0.0  0.0  0.0  0.0  
-4  0.0  0.0  0.0  0.0  0.0  0.0  
-
-[5 rows x 1000 columns]
-0      2909.0
-1      2214.0
-2      1964.0
-3      1505.0
-4      1295.0
-        ...  
-995      24.0
-996      24.0
-997      24.0
-998      23.0
-999      23.0
-Length: 1000, dtype: float64</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># REMAP DICTIONARY TO CORRESPOND TO NEW COLUMN NUMBERS</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>i1<span class="op">=</span><span class="dv">0</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>vocab2<span class="op">=</span>{}</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i2 <span class="kw">in</span> <span class="bu">list</span>(df2.columns):</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print(i2)</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    vocab2[i1]<span class="op">=</span>vocab1[<span class="bu">int</span>(i2)]</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    i1<span class="op">+=</span><span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code></code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x.shape,y.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>(27480, 1000) (27480,)</code></pre>
-</div>
-</div>
-<section id="split-data" class="level2">
-<h2 class="anchored" data-anchor-id="split-data">Split data</h2>
-<div class="cell" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span>x.shape[<span class="dv">0</span>]</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>l <span class="op">=</span> [<span class="op">*</span><span class="bu">range</span>(N)]     <span class="co"># indices</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>cut <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.8</span> <span class="op">*</span> N) <span class="co">#80% of the list</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>cut2 <span class="op">=</span> <span class="bu">int</span>((N <span class="op">-</span> cut)<span class="op">/</span><span class="dv">2</span> <span class="op">+</span> cut)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>random.shuffle(l)   <span class="co"># randomize</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>train_index <span class="op">=</span> l[:cut] <span class="co"># first 80% of shuffled list</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>validate_index <span class="op">=</span> l[cut:cut2] <span class="co"># 10% of shuffled list</span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>test_index <span class="op">=</span> l[cut2:] <span class="co"># 10% of shuffled list</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(train_index[<span class="dv">0</span>:<span class="dv">10</span>])</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(validate_index[<span class="dv">0</span>:<span class="dv">10</span>])</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(test_index[<span class="dv">0</span>:<span class="dv">10</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[14296, 22424, 17392, 17526, 24585, 26361, 24638, 6627, 12072, 18591]
-[23360, 9584, 18499, 8186, 111, 813, 13309, 16349, 25962, 19522]
-[27216, 6052, 24856, 3687, 13387, 27063, 7015, 9406, 3469, 11620]</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Training Function</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> MultinomialNB</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_MNB_model(X,Y,i_print<span class="op">=</span><span class="va">False</span>):</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i_print):</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(X.shape,Y.shape)</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">#SPLIT</span></span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    x_train<span class="op">=</span>X[train_index]</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    y_train<span class="op">=</span>Y[train_index].flatten()</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>    x_test<span class="op">=</span>X[test_index]</span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>    y_test<span class="op">=</span>Y[test_index].flatten()</span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># INITIALIZE MODEL </span></span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> MultinomialNB()</span>
-<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># TRAIN MODEL </span></span>
-<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.process_time()</span>
-<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>    model.fit(x_train,y_train)</span>
-<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>    time_train<span class="op">=</span>time.process_time() <span class="op">-</span> start</span>
-<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># LABEL PREDICTIONS FOR TRAINING AND </span><span class="al">TEST</span><span class="co"> SET </span></span>
-<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.process_time()</span>
-<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>    yp_train <span class="op">=</span> model.predict(x_train)</span>
-<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>    yp_test <span class="op">=</span> model.predict(x_test)</span>
-<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>    time_eval<span class="op">=</span>time.process_time() <span class="op">-</span> start</span>
-<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>    acc_train<span class="op">=</span> accuracy_score(y_train, yp_train)<span class="op">*</span><span class="dv">100</span></span>
-<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a>    acc_test<span class="op">=</span> accuracy_score(y_test, yp_test)<span class="op">*</span><span class="dv">100</span></span>
-<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i_print):</span>
-<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(acc_train,acc_test,time_train,time_eval)</span>
-<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (acc_train,acc_test,time_train,time_eval)</span>
-<span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a><span class="co">#TEST</span></span>
-<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(x),<span class="bu">type</span>(y))</span>
-<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x.shape,y.shape)</span>
-<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a>(acc_train,acc_test,time_train,time_eval)<span class="op">=</span>train_MNB_model(x,y,i_print<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Training Function</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> MultinomialNB</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_MNB_model(X,Y,i_print<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i_print):</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(X.shape,Y.shape)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">#SPLIT</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    x_train<span class="op">=</span>X[train_index]</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    y_train<span class="op">=</span>Y[train_index].flatten()</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    x_test<span class="op">=</span>X[test_index]</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    y_test<span class="op">=</span>Y[test_index].flatten()</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># INITIALIZE MODEL </span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> MultinomialNB()</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># TRAIN MODEL </span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.process_time()</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    model.fit(x_train,y_train)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    time_train<span class="op">=</span>time.process_time() <span class="op">-</span> start</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># LABEL PREDICTIONS FOR TRAINING AND </span><span class="al">TEST</span><span class="co"> SET </span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.process_time()</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    yp_train <span class="op">=</span> model.predict(x_train)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    yp_test <span class="op">=</span> model.predict(x_test)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    time_eval<span class="op">=</span>time.process_time() <span class="op">-</span> start</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    acc_train<span class="op">=</span> accuracy_score(y_train, yp_train)<span class="op">*</span><span class="dv">100</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    acc_test<span class="op">=</span> accuracy_score(y_test, yp_test)<span class="op">*</span><span class="dv">100</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i_print):</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(acc_train,acc_test,time_train,time_eval)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (acc_train,acc_test,time_train,time_eval)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co">#TEST</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(x),<span class="bu">type</span>(y))</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x.shape,y.shape)</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>(acc_train,acc_test,time_train,time_eval)<span class="op">=</span>train_MNB_model(x,y,i_print<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'numpy.ndarray'&gt; &lt;class 'numpy.ndarray'&gt;
-(27480, 1000) (27480,)
-(27480, 1000) (27480,)
-69.51874090247453 66.5938864628821 0.08597999999999928 0.12059149999999974</code></pre>
+(27479, 1000) (27479, 1)
+(27479, 1000) (27479, 1)
+69.42182595642088 64.70160116448326 0.17342579999999863 1.5602830999999995</code></pre>
 </div>
 </div>
-<p>Our training and test accuracies are overall very close to each other when we use all 1000 features. This characteristic is a good sign we are optimally fitting our model. An overfitted model would post a test accuracy that is far lower than the training accuracy as an overfit model would perform fairly poorly on unseen data. An underfit model would post a training accuracy relatively lower than the test data. Luckily, neither of these cases appears to be true.</p>
-</section>
+<p>With this intitally trained model, our training and test accuracies are overall very close to each other (around 69%) when we use all 1000 features. This characteristic is a good sign we are optimally fitting our model. An overfitted model would post a test accuracy that is far lower than the training accuracy as an overfit model would perform fairly poorly on unseen data. An underfit model would post a training accuracy relatively lower than the test data. Luckily, neither of these cases appears to be true.</p>
 <section id="feature-selection" class="level2">
 <h2 class="anchored" data-anchor-id="feature-selection">Feature Selection</h2>
 <p>We will now use our subset of features to fit a final NB model. Our training model, consisting of the optimal feature set, will take a split of test data from the original dataset in order to give the model “unseen” data with classfication labels we already know, so that we can develop accurate metrics surroudning the performance of our model.</p>
 <div class="cell" data-execution_count="31">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">##UTILITY FUNCTION TO INITIALIZE RELEVANT ARRAYS</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> initialize_arrays():</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> num_features,train_accuracies</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> test_accuracies,train_time,eval_time</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    num_features<span class="op">=</span>[]</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    train_accuracies<span class="op">=</span>[]</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    test_accuracies<span class="op">=</span>[]</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    train_time<span class="op">=</span>[]</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    eval_time<span class="op">=</span>[]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">##UTILITY FUNCTION TO INITIALIZE RELEVANT ARRAYS</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> initialize_arrays():</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> num_features,train_accuracies</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> test_accuracies,train_time,eval_time</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    num_features<span class="op">=</span>[]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    train_accuracies<span class="op">=</span>[]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    test_accuracies<span class="op">=</span>[]</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    train_time<span class="op">=</span>[]</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    eval_time<span class="op">=</span>[]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="32">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># INITIALIZE ARRAYS</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>initialize_arrays()</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># DEFINE SEARCH FUNCTION</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> partial_grid_search(num_runs, min_index, max_index):</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_runs<span class="op">+</span><span class="dv">1</span>):</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># SUBSET FEATURES </span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>        upper_index<span class="op">=</span>min_index<span class="op">+</span>i<span class="op">*</span><span class="bu">int</span>((max_index<span class="op">-</span>min_index)<span class="op">/</span>num_runs)</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>        xtmp<span class="op">=</span>x[:,<span class="dv">0</span>:upper_index]</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">#TRAIN </span></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>        (acc_train,acc_test,time_train,time_eval)<span class="op">=</span>train_MNB_model(xtmp,y,i_print<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(i<span class="op">%</span><span class="dv">5</span><span class="op">==</span><span class="dv">0</span>):</span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(i,upper_index,xtmp.shape[<span class="dv">1</span>],acc_train,acc_test)</span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">#RECORD </span></span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>        num_features.append(xtmp.shape[<span class="dv">1</span>])</span>
-<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>        train_accuracies.append(acc_train)</span>
-<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>        test_accuracies.append(acc_test)</span>
-<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>        train_time.append(time_train)</span>
-<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>        eval_time.append(time_eval)</span>
-<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="co"># DENSE SEARCH (SMALL NUMBER OF FEATURES (FAST))</span></span>
-<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>partial_grid_search(num_runs<span class="op">=</span><span class="dv">100</span>, min_index<span class="op">=</span><span class="dv">0</span>, max_index<span class="op">=</span><span class="dv">1000</span>)</span>
-<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a><span class="co"># SPARSE SEARCH (LARGE NUMBER OF FEATURES (SLOWER))</span></span>
-<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>partial_grid_search(num_runs<span class="op">=</span><span class="dv">20</span>, min_index<span class="op">=</span><span class="dv">1000</span>, max_index<span class="op">=</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># INITIALIZE ARRAYS</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>initialize_arrays()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># DEFINE SEARCH FUNCTION</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> partial_grid_search(num_runs, min_index, max_index):</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_runs<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># SUBSET FEATURES </span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        upper_index<span class="op">=</span>min_index<span class="op">+</span>i<span class="op">*</span><span class="bu">int</span>((max_index<span class="op">-</span>min_index)<span class="op">/</span>num_runs)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        xtmp<span class="op">=</span>x[:,<span class="dv">0</span>:upper_index]</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">#TRAIN </span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        (acc_train,acc_test,time_train,time_eval)<span class="op">=</span>train_MNB_model(xtmp,y,i_print<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(i<span class="op">%</span><span class="dv">5</span><span class="op">==</span><span class="dv">0</span>):</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(i,upper_index,xtmp.shape[<span class="dv">1</span>],acc_train,acc_test)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">#RECORD </span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        num_features.append(xtmp.shape[<span class="dv">1</span>])</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        train_accuracies.append(acc_train)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        test_accuracies.append(acc_test)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        train_time.append(time_train)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        eval_time.append(time_eval)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co"># DENSE SEARCH (SMALL NUMBER OF FEATURES (FAST))</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>partial_grid_search(num_runs<span class="op">=</span><span class="dv">100</span>, min_index<span class="op">=</span><span class="dv">0</span>, max_index<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co"># SPARSE SEARCH (LARGE NUMBER OF FEATURES (SLOWER))</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>partial_grid_search(num_runs<span class="op">=</span><span class="dv">20</span>, min_index<span class="op">=</span><span class="dv">1000</span>, max_index<span class="op">=</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>5 50 50 56.077147016011644 56.11353711790393
 10 100 100 59.09752547307132 59.279475982532745
@@ -602,63 +417,64 @@ Length: 1000, dtype: float64</code></pre>
 20 10000 1000 69.51874090247453 66.5938864628821</code></pre>
 </div>
 </div>
+<p>Our model appears to get better all the way up to the maximum amount of features, 1000, peaking at a test accuracy of 66.59% which is a very respectable accuracy score. Let’s visualize this feature selection process.</p>
 <div class="cell" data-execution_count="33">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co">#PLOT-1</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,train_accuracies,<span class="st">'-or'</span>)</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,test_accuracies,<span class="st">'-ob'</span>)</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of features'</span>)</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'ACCURACY: Training (blue) and Test (red)'</span>)</span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2</span></span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,train_time,<span class="st">'-or'</span>)</span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,eval_time,<span class="st">'-ob'</span>)</span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of features'</span>)</span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Runtime: training time (red) and evaluation time(blue)'</span>)</span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#PLOT-1</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,train_accuracies,<span class="st">'-or'</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,test_accuracies,<span class="st">'-ob'</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of features'</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'ACCURACY: Training (blue) and Test (red)'</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,train_time,<span class="st">'-or'</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>plt.plot(num_features,eval_time,<span class="st">'-ob'</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of features'</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Runtime: training time (red) and evaluation time(blue)'</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="NB_text_classifier_files/figure-html/cell-23-output-1.png" class="img-fluid"></p>
+<p><img src="NB_text_classifier_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="NB_text_classifier_files/figure-html/cell-23-output-2.png" class="img-fluid"></p>
+<p><img src="NB_text_classifier_files/figure-html/cell-8-output-2.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We can see here that as our number of features begins to approach the maximum of 1000, both our test and training accuracies start to increase and then sort of level off. Our run time of the model does increase fairly substantially as we increase the number of features, but this run time is so small that it is negligible. I will be using all 1000 features of this data set. To reiterate, our original text data has close to 30,000 features, but the computing power neccessary to process all of these tweets is beyond the computing power at which is at my disposal. 1000 features is an optimal choice due to these constraints.</p>
 </section>
 <section id="fitting-a-final-optimal-nb-model" class="level2">
 <h2 class="anchored" data-anchor-id="fitting-a-final-optimal-nb-model">Fitting a Final, “Optimal” NB Model</h2>
-<p>We will now use our subset of features to fit a final NB model.</p>
-<div class="cell" data-execution_count="35">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix, ConfusionMatrixDisplay</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> metrics</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>x_train<span class="op">=</span>x[train_index]</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>y_train<span class="op">=</span>y[train_index].flatten()</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>x_test<span class="op">=</span>x[test_index]</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>y_test<span class="op">=</span>y[test_index].flatten()</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>clf <span class="op">=</span> MultinomialNB()</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>clf.fit(x_train,y_train)</span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> clf.predict(x_test)</span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, yp_test)</span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm)</span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We will now use our subset of features to fit a final NB model. We will assess the model by looking at the metrics of accuracy, sensitivity (recall), precision, and F-1 score. A refresher on what these metrics are and their applications can be found <a href="https://towardsdatascience.com/guide-to-confusion-matrices-classification-performance-metrics-a0ebfc08408e#:~:text=Confusion%20matrices%20can%20be%20used,%2C%20recall%2C%20and%20F1%20score.">here</a>. As a reminder, a classification of 0 means “negative”, 1 is “positive”, and 2 is “neutral”.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix, ConfusionMatrixDisplay</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> metrics</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>x_train<span class="op">=</span>x[train_index]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>y_train<span class="op">=</span>y[train_index].flatten()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>x_test<span class="op">=</span>x[test_index]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>y_test<span class="op">=</span>y[test_index].flatten()</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>clf <span class="op">=</span> MultinomialNB()</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>clf.fit(x_train,y_train)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> clf.predict(x_test)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, yp_test)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="NB_text_classifier_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+<p><img src="NB_text_classifier_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution_count="39">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>Sensitivity <span class="op">=</span> np.mean(np.diag(cm) <span class="op">/</span> np.<span class="bu">sum</span>(cm, axis <span class="op">=</span> <span class="dv">1</span>))</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>Precision <span class="op">=</span> np.mean(np.diag(cm) <span class="op">/</span> np.<span class="bu">sum</span>(cm, axis <span class="op">=</span> <span class="dv">0</span>))</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>F1_score <span class="op">=</span> <span class="dv">2</span> <span class="op">/</span> ((<span class="dv">1</span><span class="op">/</span>Sensitivity) <span class="op">+</span> (<span class="dv">1</span><span class="op">/</span>Precision))</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy:"</span>, acc_test)</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Precision:"</span>, Precision<span class="op">*</span><span class="dv">100</span>)</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sensitivity:"</span>,Sensitivity<span class="op">*</span><span class="dv">100</span>)</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"F1 Score:"</span>,F1_score<span class="op">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Sensitivity <span class="op">=</span> np.mean(np.diag(cm) <span class="op">/</span> np.<span class="bu">sum</span>(cm, axis <span class="op">=</span> <span class="dv">1</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>Precision <span class="op">=</span> np.mean(np.diag(cm) <span class="op">/</span> np.<span class="bu">sum</span>(cm, axis <span class="op">=</span> <span class="dv">0</span>))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>F1_score <span class="op">=</span> <span class="dv">2</span> <span class="op">/</span> ((<span class="dv">1</span><span class="op">/</span>Sensitivity) <span class="op">+</span> (<span class="dv">1</span><span class="op">/</span>Precision))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy:"</span>, acc_test)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Precision:"</span>, Precision<span class="op">*</span><span class="dv">100</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sensitivity:"</span>,Sensitivity<span class="op">*</span><span class="dv">100</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"F1 Score:"</span>,F1_score<span class="op">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Accuracy: 66.5938864628821
 Precision: 68.69118070244866
@@ -666,13 +482,110 @@ Sensitivity: 65.54440091919668
 F1 Score: 67.08090706180225</code></pre>
 </div>
 </div>
-<p>As we can see, our overall model accuracy is approximately 66.6% which is fairly strong. Our precision and sensitivity are also of similar strength, showing that our model’s ability to correctly predict both positive and negative outputs for negative (0), positive (1), and neutral (2) tweets are pretty strong. The F1 score weights our precision and sensitity values show us that our model overall is fairly strong in predicting all classes, as opposed to our Categorial Naive Bayes model for our record data in the other Naive Bayes tab.</p>
+<p>As we can see, our overall model accuracy is approximately 66% which is fairly strong. Our precision and sensitivity are also of similar strength, showing that our model’s ability to correctly predict both positive and negative outputs for negative (0), positive (1), and neutral (2) tweets are pretty strong. The F1 score, which weights our precision and sensitity values, show us that our model overall is fairly strong in predicting all classes (with a score of 67%), as opposed to our Categorial Naive Bayes model for our record data in the other Naive Bayes tab.</p>
 </section>
+</section>
+<section id="testing-our-classifier-on-hjkc-tweets" class="level1">
+<h1>Testing our Classifier on HJKC Tweets</h1>
+<p>I will now show how this classifier could be used with tweets surrounding specific horses at HKJC. We will now use the data we collected through the Twitter API, tweets about the horse Golden Sixty, to show how this classifier would work in a real-life application.</p>
+<p>Let’s read in the data.</p>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>golden <span class="op">=</span> pd.read_csv(<span class="st">"../../../data/01-modified-data/goldensixty.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s now make sure our data is properly formatted for the classifier.</p>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.sparse</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure X_new_vectorized has 1000 features, which is what our classifier was trained on</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> golden.shape[<span class="dv">1</span>] <span class="op">&lt;</span> <span class="dv">1000</span>:</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a new feature matrix with 1000 features</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    missing_features <span class="op">=</span> <span class="dv">1000</span> <span class="op">-</span> golden.shape[<span class="dv">1</span>]</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    additional_features <span class="op">=</span> scipy.sparse.csr_matrix((golden.shape[<span class="dv">0</span>], missing_features), dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    golden <span class="op">=</span> scipy.sparse.hstack([golden, additional_features])</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>new_predictions <span class="op">=</span> clf.predict(golden)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now I am going to create a table that shows the original tweets with their new text data classifications. As a reminder, a classification of 0 means “negative”, 1 is “positive”, and 2 is “neutral”.</p>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>og_tweets <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/goldensixty_uncleaned.csv'</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>new_predictions <span class="op">=</span> pd.DataFrame(new_predictions)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>new_df <span class="op">=</span> pd.concat([og_tweets, new_predictions], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>new_df.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="39">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">0</th>
+<th data-quarto-table-cell-role="th">0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>rt hkjcracing the mile championship winner is ...</td>
+<td>2.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>rt hongkongracing golden sixty sets out to mak...</td>
+<td>2.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>rt hongkongracing golden sixty sets out to mak...</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>hes done his job hong kong superstar golden si...</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>tantriceden you can be my santa also you are t...</td>
+<td>2.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>rt hkjcracing he has over hong kong wins and i...</td>
+<td>2.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>rt hkjcracing great training performance by jo...</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>golden sixty httpst cokiufkxst</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>he has over hong kong wins and is golden sixty...</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>rt hongkongracing a fairytale finale for golde...</td>
+<td>2.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Theoretically, the tweets above should have been about 66% correctly assigned the correct sentiment.</p>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>Overall, our model serves as a fantastic basis for classifying sentiment behind a tweet, especially if we are constrained on time for looking at tweets individually. Our model can serve as a strong basis for analyzing tweets pertaining to Hong Kong horse racing and public perception surrounding certain horses. Because horse racing odds in a parimutel betting market are directly reliant upon the betting public, having a model that is able to succesfully classify (most of the time) the sentiment behind any tweet concerning any race, course, or horse, we become even closer to identifying not only all factors relating to what drives the public to bet the way they do, but also quantifying the influence of the betting public. These findings will be reported in the final conclusive report generated from this project, likely alongside the generated model predicting sentiment behind actual HKJC-related tweets.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

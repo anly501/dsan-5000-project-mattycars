@@ -168,7 +168,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC using Multinomial Naive Bayes</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -185,24 +185,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
+    <a class="nav-link" href="../trees/classification.html" rel="" target="">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-trees" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">Decision Trees</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-trees">    
-        <li>
-    <a class="dropdown-item" href="../trees/classification.html" rel="" target="">
- <span class="dropdown-text">Classification Trees</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../trees/regression.html" rel="" target="">
- <span class="dropdown-text">Regression</span></a>
-  </li>  
-    </ul>
-  </li>
+  <li class="dropdown-header">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></li>
   <li class="nav-item">
     <a class="nav-link" href="../conclusions/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
@@ -279,7 +266,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 2                                       11:32.8</code></pre>
 </div>
 </div>
-<p>We are going to remove “horse_name_zh” which contains the horses’ names in Cantonese, “horse_url”, “owner_url”, “sire”, “no_of_start_past_10_meetings”, “dam”,“dam_sire”, “same_sire and”last_updated”. <em>Note for grader: I will go into more depth why I am removing these in the future</em> completion of this project.</p>
+<p>We are going to remove “horse_name_zh” which contains the horses’ names in Cantonese, “horse_url”, “owner_url”, “sire”, “no_of_start_past_10_meetings”, “dam”,“dam_sire”, “same_sire and”last_updated” which are all irrelevant to our analysis</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>horses.clean<span class="ot">&lt;-</span>horses[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">13</span>,<span class="dv">16</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">22</span>,<span class="dv">23</span>,<span class="dv">24</span>,<span class="dv">25</span>,<span class="dv">26</span>)]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(horses.clean,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

@@ -168,7 +168,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC using Multinomial Naive Bayes</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -185,24 +185,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
+    <a class="nav-link" href="../trees/classification.html" rel="" target="">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-trees" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">Decision Trees</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-trees">    
-        <li>
-    <a class="dropdown-item" href="../trees/classification.html" rel="" target="">
- <span class="dropdown-text">Classification Trees</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../trees/regression.html" rel="" target="">
- <span class="dropdown-text">Regression</span></a>
-  </li>  
-    </ul>
-  </li>
+  <li class="dropdown-header">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></li>
   <li class="nav-item">
     <a class="nav-link" href="../conclusions/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
@@ -239,6 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#exporting-data-without-outliersdiscovered-errors" id="toc-exporting-data-without-outliersdiscovered-errors" class="nav-link" data-scroll-target="#exporting-data-without-outliersdiscovered-errors">Exporting data without outliers/discovered errors</a></li>
   </ul></li>
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next Steps</a></li>
   </ul>
 </nav>
     </div>
@@ -250,6 +238,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="exploratory-data-analysis" class="level1">
 <h1>Exploratory Data Analysis</h1>
 <p>In this section, we will be performing an exploratory data analysis of our horses and performances data sets. This analysis will include looking at univariate, bivariate, and multivariate summary statistics and visualizations of the data, analyzing the relationships between the features in our data sets, analyzing parsimonious models that can be developed with the data, and beginning to develop some of the foundational knowledge and early conjecture pertaining to next steps in developing more advanced classifiers and predictive models.</p>
+<p>All analysis will be performed in R, with the ggplot2 package serving as a primary package in this section</p>
 <p>Reading in our data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>horses <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../../../data/01-modified-data/horses.clean.csv"</span>)</span>
@@ -435,7 +424,7 @@ $`2400`
 <p><img src="eda_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Upon first glance, we can see that any race on an AWT track was wither 1200m, 1650m, or 1800m, while races of all distances (where a finishing time was recorded) happened on turf tracks. There does not appear to be any significant difference in median finishing times for the 1200, 1650, and 1800 meter races on AWT tracks versus Turf tracks, which is actually quite suprising. The spread of times on turf tracks, however, does appear to be higher.</p>
+<p>Upon first glance, we can see that any race on an AWT track was either 1200m, 1650m, or 1800m, while races of all distances (where a finishing time was recorded) happened on turf tracks. There does not appear to be any significant difference in median finishing times for the 1200, 1650, and 1800 meter races on AWT tracks versus Turf tracks, which is actually quite suprising. The spread of times on turf tracks, however, does appear to be higher.</p>
 <p>One can only wonder how the conditions of the tracks might effect finishing time, especially with the influences of weather, seasonality, and how many races the track has already seen before a race. To analyze the effect of track condition, along with the type of track, a grid of plots can be found below.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>g5 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(perf.no.zero,<span class="fu">aes</span>(<span class="at">x=</span>track,<span class="at">y=</span>finish_time,<span class="at">color=</span>race_length))<span class="sc">+</span></span>
@@ -509,8 +498,8 @@ $`2400`
 <p><img src="eda_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>I will tidy this up and add explanation later on.</p>
-<p>Note for grader: I will likely add a plot later that explores the relationship of finishing times/placement versus the specific courses that are being run at Happy Valley and Sha Tin (especially if I decide to incorporate such in any model I create). Also, it would be cool to eventually add some kind of visualization of each race course that displays average time it takes horses to complete each stretch.</p>
+<p>The most common types of horses are privately purchased (PP) horses and privately purchased griffins (PPG). Horses from Singapore (SG) also make up a large portion of the data. International Sale Griffins (ISG) are rarer, but still make up a portion of the data. We can see that most (almost entirely) of the horses are Geldings which are castrated make horses. This graphic is able to paint the picture of what horse attributes are most common in our dataset.</p>
+<p>For more information regarding horse import types, see the HKJC <a href="https://racing.hkjc.com/racing/english/racing-info/handicap_policy.asp">website</a>.</p>
 </section>
 <section id="the-effect-of-a-horses-past-performance-on-race-performance" class="level2">
 <h2 class="anchored" data-anchor-id="the-effect-of-a-horses-past-performance-on-race-performance">The Effect of a Horse’s Past Performance on Race Performance</h2>
@@ -552,16 +541,35 @@ $`2400`
 <p><img src="eda_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>We can see that most of our data is between 0 and around 15 days of rest. Let’s just look at data over that interval.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>perf_rest <span class="ot">&lt;-</span> perf[perf<span class="sc">$</span>days_between<span class="sc">&lt;=</span><span class="dv">15</span>,]</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>g11<span class="ot">&lt;-</span><span class="fu">ggplot</span>(perf_rest,<span class="fu">aes</span>(<span class="at">x=</span>average_placement, <span class="at">y=</span>days_between))<span class="sc">+</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_count</span>()<span class="sc">+</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Placement Before Race vs. Final Race Placing"</span>)<span class="sc">+</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Days of Rest Between Races"</span>)<span class="sc">+</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Final Placing"</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>g11</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="eda_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>One of the largest observations we can take away from this visualization is that horses that are placing on the podium (top 3) are mostly getting at least 4+ days of rest. A well rested horse does not mean that it will win, but if a horse placed highly, it does appear it was likely well rested horses.</p>
 </section>
 </section>
 <section id="exporting-data-without-outliersdiscovered-errors" class="level2">
 <h2 class="anchored" data-anchor-id="exporting-data-without-outliersdiscovered-errors">Exporting data without outliers/discovered errors</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(perf,<span class="st">"../../../data/01-modified-data/perf.clean.no.error.csv"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(perf,<span class="st">"../../../data/01-modified-data/perf.clean.no.error.csv"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-
-
 </section>
+</section>
+<section id="next-steps" class="level1">
+<h1>Next Steps</h1>
+<p>With this exploratory analysis, we are going to carry these findings right into our Naive Bayes Classification section. Findings from this section will be used and referenced throughout the rest of this project.</p>
+
+
 </section>
 
 </main> <!-- /main -->

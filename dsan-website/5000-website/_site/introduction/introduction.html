@@ -153,7 +153,7 @@ div.csl-indent {
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC using Multinomial Naive Bayes</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -170,24 +170,11 @@ div.csl-indent {
  <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
+    <a class="nav-link" href="../trees/classification.html" rel="" target="">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-trees" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">Decision Trees</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-trees">    
-        <li>
-    <a class="dropdown-item" href="../trees/classification.html" rel="" target="">
- <span class="dropdown-text">Classification Trees</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../trees/regression.html" rel="" target="">
- <span class="dropdown-text">Regression</span></a>
-  </li>  
-    </ul>
-  </li>
+  <li class="dropdown-header">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></li>
   <li class="nav-item">
     <a class="nav-link" href="../conclusions/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
@@ -259,7 +246,7 @@ div.csl-indent {
 <li>The track takeout</li>
 <li>Breakage</li>
 </ol>
-<p>Typically you will see horse racing bookmakers take between a 16% and 20% takeout from the pool (a number established internally by the bookmakers). Breakage, desribes the process in which payoffs are rounded down to the nearest dime, a practice that is common in most jurisdictions where horse racing is legal. Looking at a theoretical example of how payouts/odds, takeouts, and breakage work, if 40% of the win pool is wagered on one horse, the wagering public would effectively be saying that the horse in question is a 3:2 proposition. But factor in the track takeout, and that potential payoff would drop to 4:3 (which would display as 1:1, or even money, on your screen). Then breakage could take away up to nine cents per every $2 wagered.</p>
+<p>Typically you will see horse racing bookmakers take between a 16% and 20% takeout from the pool (a number established internally by the bookmakers). Breakage, describes the process in which payoffs are rounded down to the nearest dime, a practice that is common in most jurisdictions where horse racing is legal. Looking at a theoretical example of how payouts/odds, takeouts, and breakage work, if 40% of the win pool is wagered on one horse, the wagering public would effectively be saying that the horse in question is a 3:2 proposition. But factor in the track takeout, and that potential payoff would drop to 4:3 (which would display as 1:1, or even money, on your screen). Then breakage could take away up to nine cents per every $2 wagered.</p>
 <p>You can probably see how pari-mutuel pricing and odds can get pretty complex, pretty quick, especially when one is betting on mulitple horse placements, either in a specific finishing order or in any finishing order. While this topic is certainly intersting, especially with respects to game theory, it is not neccesarily the focus of this project. While the outcomes of this project may lead to exploration in advanced betting systems in a pari-mutuel horse racing market, it is not going to be of major focus throughout the exploration of this project. This section is intended to lay the groundwork for the rationale behind this project and the reasonings behind why this project is specifically concerning itself with horse racing in Hong Kong.</p>
 </section>
 <section id="project-rationale" class="level2">
@@ -284,10 +271,9 @@ div.csl-indent {
 <li>Do some horses perform better on turf or grass tracks?</li>
 <li>Do certain breeds of horses perform better than others?</li>
 <li>Do past race placments give any insight to future placments?</li>
-<li>Do horses in their “rookie” seasons perform better or worse than the rest of the field?</li>
-<li>How much do the closing odds determine where a horse finishes?</li>
-<li>How much does horse “rating” come into play when trying to determine horse performance?</li>
-<li>To what extent do past length-behind-winner measurements determine horse perfomance?</li>
+<li>Does a horse’s rest between races have an impact on their racing performance?</li>
+<li>Are certain horses sexes preffered over others?</li>
+<li>Can we predict if a horse will finish on the podium (top 3 finish)?</li>
 </ol>
 <section id="references" class="level3">
 <h3 class="anchored" data-anchor-id="references">References</h3>

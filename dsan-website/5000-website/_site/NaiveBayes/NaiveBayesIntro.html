@@ -134,7 +134,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC using Multinomial Naive Bayes</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -151,24 +151,11 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
+    <a class="nav-link" href="../trees/classification.html" rel="" target="">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-trees" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">Decision Trees</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-trees">    
-        <li>
-    <a class="dropdown-item" href="../trees/classification.html" rel="" target="">
- <span class="dropdown-text">Classification Trees</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../trees/regression.html" rel="" target="">
- <span class="dropdown-text">Regression</span></a>
-  </li>  
-    </ul>
-  </li>
+  <li class="dropdown-header">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></li>
   <li class="nav-item">
     <a class="nav-link" href="../conclusions/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
@@ -215,8 +202,7 @@ ul.task-list li input[type="checkbox"] {
 <figcaption class="figure-caption">Bayes Theorem</figcaption>
 </figure>
 </div>
-<p><em>(I will make sure this is higher resolution later.)</em></p>
-<p>In our case, c is equal to the class when we are trying to predict and x is equal to a predictor, an attribute of our dataset. Our computers are able to very quickly generate these probabilities for all of our predictors of interest and then assign a class to a data observation based on the highest posterior probability. It is important to note that an important assumption of Naive Bayes Classifcation is that all predictors are independent of each other.</p>
+<p>In our case, ‘c’ is equal to the class when we are trying to predict and ‘x’ is equal to a predictor, an attribute of our dataset. Our computers are able to very quickly generate these probabilities for all of our predictors of interest and then assign a class to a data observation based on the highest posterior probability. It is important to note that an important assumption of Naive Bayes Classifcation is that all predictors are independent of each other.</p>
 <p>Naive Bayes is a very fast and easy way to generate classification predicitions and performs very well in cases of categorical input variables compared to numerical variables (where normality is assumed for these variables). When the assumption of independence holds, Naive Bayes often performs better than other machine learning methods like logistic regression, but this assumption of independence can also serve as a major detriment to this algorithim as in real life, it is very unlikely we have a set of predictors that are completely independent.</p>
 </section>
 <section id="types-of-naive-bayes-algorithms" class="level2">
@@ -230,7 +216,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="project-applications" class="level2">
 <h2 class="anchored" data-anchor-id="project-applications">Project Applications</h2>
-<p>For this project, I will be using Categorical NB for the purposes of trying to predict horse racing podium finishers (when a horse places 1st, 2nd, or 3rd in a race) and Multinomial NB for sentiment analysis of tweets, with the purposes of being able to analyze the sentiment behind tweets relating to HKJC horse racing. Being able to predict horse racing podium finishers is a signficant segement of any horse racing betting market. Creating a model to try and succesfully pin down the features that drive a horse to a successful podium finish could not only serve as a strong model in its own right, but also help inform more complex predictive models that incorportate both categorical and numerical variables to predict even more specific race outcomes.</p>
+<p>For this project, I will be using Multinomial NB for the purposes of trying to predict horse racing podium finishers (when a horse places 1st, 2nd, or 3rd in a race) and also for sentiment analysis of tweets, with the purposes of being able to analyze the sentiment behind tweets relating to HKJC horse racing. Being able to predict horse racing podium finishers is a signficant segement of any horse racing betting market. Creating a model to try and succesfully pin down the features that drive a horse to a successful podium finish could not only serve as a strong model in its own right, but also help inform more complex predictive models that incorportate both categorical and numerical variables to predict even more specific race outcomes.</p>
 <p>Likewise, a tweet sentiment classification model will serve a couple purposes. For one, it will serve as a foundational element for creating a more complex predictive model that is able to measure public sentiment surrounding specific horses and races. It is with this sentiment measurement that an understanding of what is driving the creation of the parimutel betting odds from the lens of the betting public can be furthered analyzed. Such a classification model can also be potentially used to develop a more sophisticated predictive model that utilizes measures of public sentiment surrounding horses/races to measure ineffciencies in betting markets.</p>
 
 

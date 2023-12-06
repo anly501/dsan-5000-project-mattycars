@@ -168,7 +168,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC using Multinomial Naive Bayes</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -185,24 +185,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
+    <a class="nav-link" href="../trees/classification.html" rel="" target="">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-trees" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">Decision Trees</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-trees">    
-        <li>
-    <a class="dropdown-item" href="../trees/classification.html" rel="" target="">
- <span class="dropdown-text">Classification Trees</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../trees/regression.html" rel="" target="">
- <span class="dropdown-text">Regression</span></a>
-  </li>  
-    </ul>
-  </li>
+  <li class="dropdown-header">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></li>
   <li class="nav-item">
     <a class="nav-link" href="../conclusions/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
@@ -236,6 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#k-means-clustering-1" id="toc-k-means-clustering-1" class="nav-link" data-scroll-target="#k-means-clustering-1">K-Means Clustering</a></li>
   <li><a href="#dbscan" id="toc-dbscan" class="nav-link" data-scroll-target="#dbscan">DBSCAN</a></li>
   <li><a href="#hierarchical-clustering-1" id="toc-hierarchical-clustering-1" class="nav-link" data-scroll-target="#hierarchical-clustering-1">Hierarchical Clustering</a></li>
+  <li><a href="#k-modes-clustering-1" id="toc-k-modes-clustering-1" class="nav-link" data-scroll-target="#k-modes-clustering-1">K-Modes Clustering</a></li>
   <li><a href="#final-results-and-conclusions" id="toc-final-results-and-conclusions" class="nav-link" data-scroll-target="#final-results-and-conclusions">Final Results and Conclusions</a></li>
   </ul>
 </nav>
@@ -263,13 +251,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p>In this section, I will be using my feature data in order for the purposes of clustering. I will be completing 4 different clustering techniques: 3 for my numerical feature set (k-means, and DBSCAN, and Hierarchical clustering) and 1 for my categorical feature set (k-modes). The increased emphasis on our numerical feature set comes from the fact that our numerical features appear to be more significant than our categorical features in terms of explaining a horse’s race performance and also due to the fact that previous sections, like our Classification section, have already explored a lot of the nuances of our categorical feature set. The overall intentions of this analysis will be to try and find “groups” of horses within our peformance dataset. This analysis will be helpful in visualizing some of the interactions between variables and not only what really is driving differentiations in horse racing performance, but what are these differentiations.</p>
+<p>This section will be completed using Python.</p>
 </section>
 <section id="theory" class="level1">
 <h1>Theory</h1>
 <p>Before delving into our analysis, I am going to provide an overview of the various clustering methods that will be used in this section, highlighting what the methods are, how they work, and any model selections that I will be using with each method. It should be noted that all these clustering methods are unsupervised machine learning algorithims, meaning they attempt to form and label groups from a label-less feature set.</p>
 <section id="k-means-clustering" class="level2">
 <h2 class="anchored" data-anchor-id="k-means-clustering">K-Means Clustering</h2>
-<p><em>Adapted from: <a href="https://towardsdatascience.com/three-versions-of-k-means-cf939b65f4ea">Towards Data Science</a></em> K-means clustering, one of the most common clustering algorithims in machine learning, attempts to assign similar data points, without labels, to a specified number of groups, k, that we as the data scientist get to define. We will delve more into this decision of what k should be in a little bit.</p>
+<p><em>Adapted from: <a href="https://towardsdatascience.com/three-versions-of-k-means-cf939b65f4ea">Towards Data Science</a></em></p>
+<p>K-means clustering, one of the most common clustering algorithims in machine learning, attempts to assign similar data points, without labels, to a specified number of groups, k, that we as the data scientist get to define. We will delve more into this decision of what k should be in a little bit.</p>
 <p>K-means clustering typically implies the usage of LLoyd’s algorithim, although there a variety of different algorithims that can be used to do k-means clustering (see the above link). For the purposes of this project, we will just be reviewing Lloyd’s algorithims. Lloyd’s works by following steps: 1. k is chosen as the number of centroids, with k datapoints being randomly selected as centroids 2. Every data point is randomly assigned to a centroid and centroids are recalculated a mean of all their assigned datapoints. 3. Each datapoint is reassigned to its closest centroid (typically by the usage of distance metric like Euclidean distance), centroids are recalculated as a mean of their assigned data points. 4. Steps 1-3 are repeated until convergence.</p>
 </section>
 <section id="density-based-spatial-clustering-of-applications-with-noise-dbscan" class="level2">
@@ -280,6 +270,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="hierarchical-clustering" class="level2">
 <h2 class="anchored" data-anchor-id="hierarchical-clustering">Hierarchical Clustering</h2>
+<p><em>Adapted from <a href="https://www.displayr.com/what-is-hierarchical-clustering/#:~:text=Hierarchical%20clustering%2C%20also%20known%20as,broadly%20similar%20to%20each%20other.">DisplayR</a></em></p>
 <p>At the core of hierarchical clustering is the dendrogram. A dendrogram is a tree-like visualization that relates all dataspoints in our space. At the bottom of our dendrogram, we have each of our datapoints. As we move up the tree, we see the tree aggregate into clusters. The further we move up the tree, the greater our cluster size/distance is. An example image of a dendrogram can be seen below (the orginal image can be found in the above link).</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -293,7 +284,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="k-modes-clustering" class="level2">
 <h2 class="anchored" data-anchor-id="k-modes-clustering">K-Modes Clustering</h2>
-<p>I will add a write up on this later. Right now, I am just knocking out the requirements for Homework 4.</p>
+<p>*Adapted from <a href="https://medium.com/@shailja.nitp2013/k-modesclustering-ef6d9ef06449">K-Modes Clustering</a></p>
+<p>K-Modes clustering is a variant of the K-Means algorithm designed for categorical data, where data points are represented by categorical attributes rather than continuous numerical values. Unlike K-Means, which operates on numerical features, K-Modes identifies clusters based on the mode (most frequent category) within each cluster. It measures dissimilarity using a matching metric for categorical variables, aiming to minimize the number of mismatches within clusters. The algorithm assigns each data point to the cluster with the most similar categorical profile. Huang’s initialization method is commonly used with K-Modes clustering to initialize centroids effectively. This method starts by randomly selecting a data point as the first centroid and then chooses subsequent centroids based on their dissimilarity to existing ones. Huang’s initialization improves the convergence and performance of K-Modes clustering, particularly when dealing with datasets consisting of categorical features.</p>
 </section>
 </section>
 <section id="methods" class="level1">
@@ -324,30 +316,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sklearn</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kmodes.kmodes <span class="im">import</span> KModes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="6">
+<div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pulling in our data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>horses <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/horses.clean.csv'</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> pd.read_csv(<span class="st">'../../../data/01-modified-data/perf.clean.no.error.csv'</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Joining data</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>perf_clean <span class="op">=</span> pd.merge(perf,horses[[<span class="st">"horse_id"</span>,<span class="st">"colour"</span>,<span class="st">"sex"</span>,<span class="st">"import_type"</span>]],on<span class="op">=</span><span class="st">"horse_id"</span>,how <span class="op">=</span> <span class="st">"inner"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_360334/3511168221.py:3: DtypeWarning: Columns (10,18,25,26,27,28,29,30) have mixed types. Specify dtype option on import or set low_memory=False.
+<pre><code>/tmp/ipykernel_178542/3511168221.py:3: DtypeWarning: Columns (10,18,25,26,27,28,29,30) have mixed types. Specify dtype option on import or set low_memory=False.
   perf = pd.read_csv('../../../data/01-modified-data/perf.clean.no.error.csv')</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="7">
+<div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subsetting our numerical feature set</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>perf_numerical <span class="op">=</span> perf_clean[[<span class="st">'rating'</span>,<span class="st">'on_date_weight'</span>,<span class="st">'draw'</span>,<span class="st">'average_placement'</span>,<span class="st">'days_between'</span>]]</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>perf_numerical <span class="op">=</span> perf_numerical.dropna()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="8">
+<div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalizing our feature set</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>scaled_data <span class="op">=</span> scaler.fit_transform(perf_numerical)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="9">
+<div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a test, train, and validation set for this process. A validation set is going to be instrumental in finding our hyper parameter</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span>scaled_data.shape[<span class="dv">0</span>]</span>
@@ -359,12 +352,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>validate_index <span class="op">=</span> l[cut:cut2] <span class="co"># 10% of shuffled list</span></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>test_index <span class="op">=</span> l[cut2:] <span class="co"># 10% of shuffled list</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="13">
+<div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>validation_set <span class="op">=</span> scaled_data[validate_index]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>train_set <span class="op">=</span> scaled_data[train_index]</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>test_set <span class="op">=</span> scaled_data[test_index]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="10">
+<div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Hyper parameter tuning function</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> maximize_silhouette(X,algo<span class="op">=</span><span class="st">"kmeans"</span>,nmax<span class="op">=</span><span class="dv">20</span>,i_plot<span class="op">=</span><span class="va">False</span>):</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -391,28 +384,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(algo<span class="op">==</span><span class="st">"kmeans"</span>):</span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>            model <span class="op">=</span> sklearn.cluster.KMeans(n_clusters<span class="op">=</span>param,n_init<span class="op">=</span><span class="dv">10</span>).fit(X)</span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            labels<span class="op">=</span>model.predict(X)</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>            sil_scores.append(sklearn.metrics.silhouette_score(X,labels))</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>            params.append(param)</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span>:</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span> </span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(i_print): <span class="bu">print</span>(param,sil_scores[<span class="op">-</span><span class="dv">1</span>])</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(sil_scores[<span class="op">-</span><span class="dv">1</span>]<span class="op">&gt;</span>sil_max):</span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>             opt_param<span class="op">=</span>param</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>             sil_max<span class="op">=</span>sil_scores[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>             opt_labels<span class="op">=</span>labels</span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"OPTIMAL PARAMETER ="</span>,opt_param)</span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i_plot):</span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        ax.plot(params, sil_scores, <span class="st">"-o"</span>)  </span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>        ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Hyper-parameter'</span>, ylabel<span class="op">=</span><span class="st">'Silhouette'</span>)</span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> opt_labels</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> algo <span class="op">==</span> <span class="st">"kmodes"</span>:</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>            model <span class="op">=</span> KModes(n_clusters<span class="op">=</span>param, init<span class="op">=</span><span class="st">'Huang'</span>, n_init<span class="op">=</span><span class="dv">5</span>, verbose<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>            labels <span class="op">=</span> model.fit_predict(X)</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            sil_scores.append(sklearn.metrics.silhouette_score(X,labels))</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>            params.append(param)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span>:</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span> </span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(i_print): <span class="bu">print</span>(param,sil_scores[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(sil_scores[<span class="op">-</span><span class="dv">1</span>]<span class="op">&gt;</span>sil_max):</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>             opt_param<span class="op">=</span>param</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>             sil_max<span class="op">=</span>sil_scores[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>             opt_labels<span class="op">=</span>labels</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"OPTIMAL PARAMETER ="</span>,opt_param)</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(i_plot):</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        ax.plot(params, sil_scores, <span class="st">"-o"</span>)  </span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>        ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Hyper-parameter'</span>, ylabel<span class="op">=</span><span class="st">'Silhouette'</span>)</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> opt_labels</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="k-means-clustering-1" class="level1">
@@ -454,7 +451,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="clustering_files/figure-html/cell-10-output-2.png" class="img-fluid"></p>
 </div>
 </div>
-<p><em>Note: I will add more plots breaking down the various features by cluster later on. Keeping it on the simpler side for the homework.</em></p>
 <p>In this plot we can notice that there are indeed 3 distinct clusters, with days of rest between races really driving the split of data, along with horse rating driving the split between the data points with low days of rest. There is, however, significant overlap in our clusters which definitely detracts from this application of k-means clustering. This phenomena was to be expected, though, with a silhouette score of around 0.2.</p>
 </section>
 <section id="dbscan" class="level1">
@@ -501,7 +497,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="clustering_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<p><em>Note: Once again, I will create more plots breaking down our clusters by all the different features later on.</em></p>
 <p>In the above plot, we can see that we pretty much have 1 cluster, with noise created by Days of Rest Between Races. I do think their is validity in our DBSCAN clustering, especially given the silhouette score, BUT such a high score could likely be due to the fact that it is only grouping 1 main cluster with some points labeled as noise. This clustering is not neccessairly helpful. I had to specify 1000 minimum samples as one of the parameters, otherwise the default, 2 minimum samples, has just 1 giant mega cluster with 2 points labeled as noise. These observations do show us that there is not neccessarily a lot of changes in density within the data points. This tells us that there are not neccesarily strong indicators that differentiate certain horse performances over others, at least in terms of density of data points. This observation IS a noted disadvantage of DBSCAN in that DBSCAN struggles when there is overlap of our clusters. K-mean clustering did highlight that there are signifcant overlaps of our datapoints, so this is a caveat that must be taken into account of DBSCAN model.</p>
 </section>
 <section id="hierarchical-clustering-1" class="level1">
@@ -556,11 +551,100 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Agglomerative clustering provides us with a similar looking plot to our k-means clustering plot, but with slightly more overlap between the 3 clusters. This phenomena makes sense as our silhouette score for agglomerative clustering is slightly lower for all parameter choices compared to k-means clustering. Still though, it is reassuring to see that once again, 3 clusters are being chosen as the most significant number of clusters among all choices for clusters.</p>
 </section>
+<section id="k-modes-clustering-1" class="level1">
+<h1>K-Modes Clustering</h1>
+<p>Finally, we will perform k-modes clustering with our categorical variables, sex, colour, and import type. It is through this categorical analysis that we might able to gain more of an insight into how horses can be grouped based on their attributes. We will first begin by subsetting our categorical variables and then splitting them into training, validation, and test sets.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> LabelEncoder</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Subsetting categorical data</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>perf_categorical <span class="op">=</span> perf_clean[[<span class="st">'sex'</span>,<span class="st">'colour'</span>,<span class="st">'import_type'</span>]]</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>perf_categorical <span class="op">=</span> perf_categorical.dropna()</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Encoding our categorical data for our algorithim</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>label_encoder <span class="op">=</span> LabelEncoder()</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>df_encoded <span class="op">=</span> perf_categorical.<span class="bu">apply</span>(label_encoder.fit_transform)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>encoded <span class="op">=</span> np.array(df_encoded)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating data splits</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span>encoded.shape[<span class="dv">0</span>]</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>l <span class="op">=</span> [<span class="op">*</span><span class="bu">range</span>(N)]     <span class="co"># indices</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>cut <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.8</span> <span class="op">*</span> N) <span class="co">#80% of the list</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>cut2 <span class="op">=</span> <span class="bu">int</span>((N <span class="op">-</span> cut)<span class="op">/</span><span class="dv">2</span> <span class="op">+</span> cut)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>random.shuffle(l)   <span class="co"># randomize</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>train_index <span class="op">=</span> l[:cut] <span class="co"># first 80% of shuffled list</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>validate_index <span class="op">=</span> l[cut:cut2] <span class="co"># 10% of shuffled list</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>test_index <span class="op">=</span> l[cut2:] <span class="co"># 10% of shuffled list</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>validation_set <span class="op">=</span> encoded[validate_index]</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>train_set <span class="op">=</span> encoded[train_index]</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>test_set <span class="op">=</span> encoded[test_index]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>maximize_silhouette(validation_set,algo<span class="op">=</span><span class="st">"kmodes"</span>,nmax<span class="op">=</span><span class="dv">6</span>,i_plot<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OPTIMAL PARAMETER = 5</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="clustering_files/figure-html/cell-17-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>array([4, 0, 3, ..., 4, 3, 0], dtype=uint16)</code></pre>
+</div>
+</div>
+<p>With the above plot, we can see that our optimal number of clusters is 5. We will proceed by using 5 clusters and visualizing these clusters.</p>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize K-Modes with 5 clusters and Huang initialization</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>k_modes <span class="op">=</span> KModes(n_clusters<span class="op">=</span><span class="dv">5</span>, init<span class="op">=</span><span class="st">'Huang'</span>, n_init<span class="op">=</span><span class="dv">5</span>, verbose<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the model to the data</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>clusters <span class="op">=</span> k_modes.fit_predict(test_set)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>test_set_with_clusters <span class="op">=</span> np.column_stack((test_set, clusters))</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> plt.cm.nipy_spectral(clusters <span class="op">/</span> <span class="fl">5.0</span>)  <span class="co"># Adjust for the number of clusters</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Use indices for plotting</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>plt.scatter(test_set_with_clusters[:, <span class="dv">0</span>], test_set_with_clusters[:, <span class="dv">2</span>], c<span class="op">=</span>colors, s<span class="op">=</span><span class="dv">50</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'K-Modes Clustering'</span>)</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Sex'</span>)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Import Type'</span>)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Init: initializing centroids
+Init: initializing clusters
+Starting iterations...
+Run 1, iteration: 1/100, moves: 262, cost: 9569.0
+Init: initializing centroids
+Init: initializing clusters
+Starting iterations...
+Run 2, iteration: 1/100, moves: 4810, cost: 8722.0
+Init: initializing centroids
+Init: initializing clusters
+Starting iterations...
+Run 3, iteration: 1/100, moves: 3987, cost: 12225.0
+Init: initializing centroids
+Init: initializing clusters
+Starting iterations...
+Run 4, iteration: 1/100, moves: 4025, cost: 14418.0
+Init: initializing centroids
+Init: initializing clusters
+Starting iterations...
+Run 5, iteration: 1/100, moves: 0, cost: 15681.0
+Best run was number 2</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="clustering_files/figure-html/cell-18-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Unfortunately, k-modes clustering does not help us glean too much information about our data. We can see that it gives us one cluster around import type 2, PPG, which does make sense as we found in our EDA that PPG horses make up almost half of the data. Other than this observation, our k-modes clustering does not tell us a whole lot about our data. The lack of information gain DOES tell us, however, that differences in horses within the data are more likely driven by other factors, like our numerical variables.</p>
+<p>Now, with a silhouette score above 0.45, this is technically our highest scoring clustering method outside of DBSCAN. 0.45, still however, is not THAT great of a score. Our lack of information gained from seeing 5 clusters is overall too detrimental to using this clustering method as a viable leg of our analysis.</p>
+</section>
 <section id="final-results-and-conclusions" class="level1">
 <h1>Final Results and Conclusions</h1>
-<p>Our final results point toward k-means clustering being the most effective method for clustering. DBSCAN does give us a fairly high silhouette score, but this is mostly due to the fact that it is only creating 1 real cluster with some noise, which is not really helpful for us to derive conclusions and some sort of grouping within our data. For this reason, we then look at our k-means clustering and hierarchichal clustering as better methods of clustering. Both give us 3 main clusters, but k-means clustering overall has a higher silhouette score with less overlap between clusters.</p>
-<p>The real question now becomes: what do the 3 clusters represent, especially since they do not really coincide with our target variables, the binary podium finish target variable and the variable of final finishing place which is the discrete integers 1 through 14? There are few explanations for what these clusters represent, given what we know abour data and what some of our visualizations in this section tell us. The most obvious answer is that it is clustering the data into the horses that perform well, horses that perform somewhere toward the middle of the road, and horses that perform poorly. We can especially see this explanation at play when we look at the interaction between features horse rating (the most comprehensive metric on horse performance) and days of rest between races. These variables explain most of the variance in our feature set (as explored in the PCA section) and show us that there is a cluster for horses who had a lot of days of rest and then horses who had few days of rest but are split up by if they have either a higher or lower rating. It is clear that horses who have a lot of days of rest are able to perform better. If they do not have a lot of days of rest, then their performance comes down to their rating; if they have a poor rating, they do fairly bad and if they have a higher rating, they perform either middle of the pack or better.</p>
-<p>I will add slightly more explanation later, along with a breakdown of our categorical variables.</p>
+<p>Our final results point toward k-means clustering being the most effective method for clustering, with k-modes clustering being the least helpful method. DBSCAN does give us a fairly high silhouette score, but this is mostly due to the fact that it is only creating 1 real cluster with some noise, which is not really helpful for us to derive conclusions and some sort of grouping within our data. For this reason, we then look at our k-means clustering and hierarchichal clustering as better methods of clustering. Both give us 3 main clusters, but k-means clustering overall has a higher silhouette score with less overlap between clusters.</p>
+<p>The real question now becomes: what do the 3 clusters represent, especially since they do not really coincide with our target variables, the binary podium finish target variable and the variable of final finishing place which is the discrete integers 1 through 14? There are a few explanations for what these clusters represent, given what we know abour data and what some of our visualizations in this section tell us. The most obvious answer is that it is clustering the data into the horses that perform well, horses that perform somewhere toward the middle of the road, and horses that perform poorly. We can especially see this explanation at play when we look at the interaction between features horse rating (the most comprehensive metric on horse performance) and days of rest between races. These variables explain most of the variance in our feature set (as explored in the PCA section) and show us that there is a cluster for horses who had a lot of days of rest and then horses who had few days of rest but are split up by if they have either a higher or lower rating. It is clear that horses who have a lot of days of rest are able to perform better. If they do not have a lot of days of rest, then their performance comes down to their rating; if they have a poor rating, they do fairly bad and if they have a higher rating, they perform either middle of the pack or better.</p>
 
 
 </section>

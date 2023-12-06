@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>DSAN-5000: Project - Conclusions</title>
+<title>DSAN-5000: Project - Conclusion</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -134,7 +134,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_categorical_classifier.html" rel="" target="">
- <span class="dropdown-text">Classification of Podium Finishing at HKJC (probably re work this section with a cateogorical classifier and then multinomial classifier with rating and draw)</span></a>
+ <span class="dropdown-text">Classification of Podium Finishing at HKJC using Multinomial Naive Bayes</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../NaiveBayes/NB_text_classifier.html" rel="" target="">
@@ -151,24 +151,11 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../ARM/ARM.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
+    <a class="nav-link" href="../trees/classification.html" rel="" target="">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-trees" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">Decision Trees</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-trees">    
-        <li>
-    <a class="dropdown-item" href="../trees/classification.html" rel="" target="">
- <span class="dropdown-text">Classification Trees</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../trees/regression.html" rel="" target="">
- <span class="dropdown-text">Regression</span></a>
-  </li>  
-    </ul>
-  </li>
+  <li class="dropdown-header">
+ <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></li>
   <li class="nav-item">
     <a class="nav-link active" href="../conclusions/conclusions.html" rel="" target="" aria-current="page">
  <span class="menu-text">Conclusions</span></a>
@@ -192,7 +179,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Conclusions</h1>
+<h1 class="title">Conclusion</h1>
 </div>
 
 
@@ -207,6 +194,14 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<p>Over this course of this project, we have identified some of the key variables and relationships that explain how horses at the Hong Kong Jockey Club (HKJC) perform in a given race. We created data visualizations under the Data Exploration section that uncovered some suprising truths about horse racing, including that the weight of a horse, nor any added weight, has too much of a bearing on a horse’s race performance, a contradiction to popular tropes in the horse racing betting community. We also uncovered phenomena like that there is a clear advantage for the inside lanes in longer races and that horses rated above certain thresholds (125 and above) almost always place higher. Also, a track’s surface and condition appear to play way less of a factor in a horse’s performance than orginally thought. It is through these findings that we were able to more clearly understand what drives a horse to be successful at the race track.</p>
+<p>Under our Naive Bayes section, we created a Multinomial Classifier that uses a horse’s attributes like sex, color, and import type, along with discrete features like rating, draw, and days of rest, to predict if a horse will have a podium finish. Our classier has precision (our primary metric of interest) of around 35%, compared to a random classifier which has a precision around 25%. We also created a text classifier that is able to classify the sentiment (positive, negative, or neutral) of tweets with an almost 67% accuracy. We used our trained tweet sentiment classifier to help us classify tweets relating to HKJC’s reigning horse of the year, Golden Sixty.</p>
+<p>We also conducted an exploration of dimensionality in our data set, first peforming a Principal Component Analysis (PCA) of our numerical features in order to figure out which features explain most of the variation in our data. Horse rating and days of rest between races came out to be the most significant of our variables with draw and average placement being our next most “important” variables, with the rest of the variables, except for actual weight, also showing some sort of significant explanation of the variance in the feature set. We used this information to come up with an “optimal” numerical feature set for our sections’ analyses. Also in our exploration of dimensionality, we peformed a T-distributed Stochastic Neighbor Embedding (t-SNE) analysis which helped us visualize our high dimensional data in a 2-D plane.</p>
+<p>After our dimensionality exploration, we ventured into clustering. We performed 4 different clustering techniques: 3 for our numerical feature set found in the dimesnionality section, k-means, and DBSCAN, and Hierarchical clustering, and 1 for our categorical feature set, k-modes. K-modes clustering proved to not be very helpful, giving us 5 clusters with a hardy intrepretable structure. Our numerical clustering showed us that k-means was our most insightful algorithim, giving us 3 clusters of data which can explained as groups of horses that perform well, horses that perform somewhere toward the middle of the road, and horses that perform poorly. Clustering served as a valuable technique to look at groupings in our data that are not given to us.</p>
+<p>Last, but not least, we created a wide variety of tree-based classifiers in our Decision Tree section which served as the most substantial section of this project. Through the creation of a variety of decision trees, random forests, adaptive boosted models, gradient boosting techqniues, and combinations of all these methods, we were able to create a classifier (an AdaBoost classifier with a Random Forest as the base estimator) that is able to pick horse racing podium finishers at the 1200m distance, under a specific set of race conditions, with 50% precision. While 50% precision might not sound all that great on the surface, it actually is extremely valuable, as it allow us ample room to make positive expected value (EV) bets in a parimutel betting market, a mathemathically sure technique for making betting profits.</p>
+<p>It was discussed that the model we created was only created for one distance under a specific set of racing conditions, so in order for a comprehensive predictive model/betting system, a model would have to be fit at every race distance for ALL race conditions which amounts to hundreds upon hundreds of possible combinations. Our model we generated took over 40 minutes of runtime to create, so creating such a comprehensive predictive system would be VERY computationally expensive. However, it is with our model that we have laid the groundwork for the the future realization of such an advanced system.</p>
+<p>While this project does not give us a “ready-to-go” betting system for the HKJC’s betting market, we still now understand some of the main variables, patterns, and interactions that drive horse racing performance at the Hong Kong tracks, and we also have the foundation of a more advanced predictive/betting system. I am going to continue working on creating a more comprehensive betting system for Hong Kong horses, beyond this class project, exploring more advanced algorithims and working to gather more relevant data. This project, overall, encompasses one of my greatest passions of sports handicapping and served as a tremendous learning opportunity for me as I begin my journey deeper into algorithimic betting.</p>
+<p><em>For any questions, comments, or suggestions, I can be contacted at msc301@georgetown.edu</em></p>
 
 
 
