@@ -186,10 +186,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../trees/classification.html" rel="" target="">
- <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></a>
+ <span class="menu-text">Classifying Podium Finishers</span></a>
   </li>  
-  <li class="dropdown-header">
- <span class="menu-text">Classifying Podium Finishers with Decision Trees</span></li>
   <li class="nav-item">
     <a class="nav-link" href="../conclusions/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
@@ -225,6 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="data-cleaning" class="level1">
 <h1>Data Cleaning</h1>
+<p>This section was completed using R.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>horses<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"../../../data/00-raw-data/horses.csv"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>performances<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"../../../data/00-raw-data/performances.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -266,7 +265,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 2                                       11:32.8</code></pre>
 </div>
 </div>
-<p>We are going to remove “horse_name_zh” which contains the horses’ names in Cantonese, “horse_url”, “owner_url”, “sire”, “no_of_start_past_10_meetings”, “dam”,“dam_sire”, “same_sire and”last_updated” which are all irrelevant to our analysis</p>
+<p>We are going to remove “horse_name_zh” which contains the horses’ names in Cantonese, “horse_url”, “owner_url”, “sire”, “no_of_start_past_10_meetings”, “dam”,“dam_sire”, “same_sire and”last_updated” which are all irrelevant to our analysis.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>horses.clean<span class="ot">&lt;-</span>horses[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">13</span>,<span class="dv">16</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">22</span>,<span class="dv">23</span>,<span class="dv">24</span>,<span class="dv">25</span>,<span class="dv">26</span>)]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(horses.clean,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -390,7 +389,7 @@ Attaching package: 'dplyr'</code></pre>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="ot">&lt;-</span>perf.clean<span class="sc">%&gt;%</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>race_country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now I am going to do one of the important parts of data cleaning for this analyis: Breaking the section data into 4 distinct columns, both for LBW and time.</p>
+<p>Now I am going to break the section data into 4 distinct columns, both for LBW and time.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Getting rid of brackets and commas in the columns</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>perf.clean<span class="sc">$</span>sections <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(perf.clean<span class="sc">$</span>sections,<span class="st">"</span><span class="sc">\\</span><span class="st">[|</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">,|</span><span class="sc">\\</span><span class="st">{"</span>,<span class="st">""</span>)</span>

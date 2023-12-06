@@ -1,4 +1,5 @@
 # Data Cleaning
+This section was completed using R.
 
 ```{r}
 horses<-read.csv("../../../data/00-raw-data/horses.csv")
@@ -10,9 +11,8 @@ performances<-read.csv("../../../data/00-raw-data/performances.csv")
 head(horses,2)
 ```
 
-
 We are going to remove "horse_name_zh" which contains the horses' names in Cantonese,
-"horse_url", "owner_url", "sire", "no_of_start_past_10_meetings", "dam","dam_sire", "same_sire and "last_updated" which are all irrelevant to our analysis
+"horse_url", "owner_url", "sire", "no_of_start_past_10_meetings", "dam","dam_sire", "same_sire and "last_updated" which are all irrelevant to our analysis.
 ```{r}
 horses.clean<-horses[,-c(3,4,13,16,19,20,22,23,24,25,26)]
 head(horses.clean,2)
@@ -48,6 +48,7 @@ head(horses.clean,2)
 ```{r}
 head(performances,2)
 ```
+
 We are going to remove the column containing the Cantonese name for the horse,
 jockey name in Cantonese, jockey url, trainer name in Cantonese, trainer url,
 race url, running positions (redundant information),and last updated, and length behind winner. Length behind winner being deleted is okay because we have LBW for all 4 sections in another variable.
@@ -70,9 +71,7 @@ perf.clean<-perf.clean%>%
   select(-race_country)
 ```
 
-Now I am going to do one of the important parts of data cleaning for this analyis:
-Breaking the section data into 4 distinct columns, both for LBW and time.
-
+Now I am going to break the section data into 4 distinct columns, both for LBW and time.
 ```{r}
 # Getting rid of brackets and commas in the columns
 perf.clean$sections <- str_replace_all(perf.clean$sections,"\\[|\\]|\\,|\\{","")
@@ -167,8 +166,8 @@ perf.clean$average_placement[!duplicated(perf.clean$horse_id)] <- NA
 # View the updated data frame
 head(perf.clean)
 ```
-Now I also want to create a variable that indicates how much rest a horse was able to get between races.
 
+Now I also want to create a variable that indicates how much rest a horse was able to get between races.
 ```{r}
 perf.clean <- perf.clean %>%
   group_by(horse_id) %>%

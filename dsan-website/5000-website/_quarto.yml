@@ -32,7 +32,7 @@ website:
       - href: clustering/clustering.ipynb
         text: Clustering
       - href: trees/classification.ipynb    
-      - text: Classifying Podium Finishers with Decision Trees
+        text: Classifying Podium Finishers
       - href: conclusions/conclusions.ipynb
         text: Conclusions
 format:
