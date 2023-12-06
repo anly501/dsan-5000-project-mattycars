@@ -30,13 +30,9 @@ website:
       - href: dimensionality/dimensionality.ipynb
         text: Dimensionality Reduction
       - href: clustering/clustering.ipynb
-        text: Clustering    
-      - href: ARM/ARM.ipynb
-        text: ARM
-      - text: Decision Trees
-        menu: 
-          - trees/classification.ipynb
-          - trees/regression.ipynb
+        text: Clustering
+      - href: trees/classification.ipynb    
+      - text: Classifying Podium Finishers with Decision Trees
       - href: conclusions/conclusions.ipynb
         text: Conclusions
 format:

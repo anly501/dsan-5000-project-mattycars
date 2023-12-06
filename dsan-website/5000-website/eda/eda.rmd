@@ -1,6 +1,8 @@
 # Exploratory Data Analysis
 In this section, we will be performing an exploratory data analysis of our horses and performances data sets. This analysis will include looking at univariate, bivariate, and multivariate summary statistics and visualizations of the data, analyzing the relationships between the features in our data sets, analyzing parsimonious models that can be developed with the data, and beginning to develop some of the foundational knowledge and early conjecture pertaining to next steps in developing more advanced classifiers and predictive models.
 
+All analysis will be performed in R, with the ggplot2 package serving as a primary package in this section
+
 Reading in our data.
 ```{r}
 horses <- read.csv("../../../data/01-modified-data/horses.clean.csv")
@@ -112,7 +114,7 @@ g4 <- ggplot(perf.no.zero,aes(x=track,y=finish_time,color=as.factor(distance)))+
   guides(color = guide_legend(title = "Race Length (m)"))
 g4
 ```
-Upon first glance, we can see that any race on an AWT track was wither 1200m, 1650m, or 1800m, while races of all distances (where a finishing time was recorded) happened on turf tracks. There does not appear to be any significant difference in median finishing times for the 1200, 1650, and 1800 meter races on AWT tracks versus Turf tracks, which is actually quite suprising. The spread of times on turf tracks, however, does appear to be higher.
+Upon first glance, we can see that any race on an AWT track was either 1200m, 1650m, or 1800m, while races of all distances (where a finishing time was recorded) happened on turf tracks. There does not appear to be any significant difference in median finishing times for the 1200, 1650, and 1800 meter races on AWT tracks versus Turf tracks, which is actually quite suprising. The spread of times on turf tracks, however, does appear to be higher.
 
 One can only wonder how the conditions of the tracks might effect finishing time, especially with the influences of weather, seasonality, and how many races the track has already seen before a race. To analyze the effect of track condition, along with the type of track, a grid of plots can be found below.
 
@@ -173,9 +175,9 @@ g8 <- ggplot(horses,aes(x=import_type,y=podium,color=sex))+
   ylab("Podium Finishes")
 g8
 ```
-I will tidy this up and add explanation later on.
+The most common types of horses are privately purchased (PP) horses and privately purchased griffins (PPG). Horses from Singapore (SG) also make up a large portion of the data. International Sale Griffins (ISG) are rarer, but still make up a portion of the data. We can see that most (almost entirely) of the horses are Geldings which are castrated make horses. This graphic is able to paint the picture of what horse attributes are most common in our dataset.
 
-Note for grader: I will likely add a plot later that explores the relationship of finishing times/placement versus the specific courses that are being run at Happy Valley and Sha Tin (especially if I decide to incorporate such in any model I create). Also, it would be cool to eventually add some kind of visualization of each race course that displays average time it takes horses to complete each stretch.
+For more information regarding horse import types, see the HKJC [website](https://racing.hkjc.com/racing/english/racing-info/handicap_policy.asp).
 
 
 ## The Effect of a Horse's Past Performance on Race Performance
@@ -212,8 +214,19 @@ g10<-ggplot(perf,aes(x=average_placement, y=days_between))+
 
 g10
 ```
+We can see that most of our data is between 0 and around 15 days of rest. Let's just look at data over that interval.
 
+```{r}
+perf_rest <- perf[perf$days_between<=15,]
+g11<-ggplot(perf_rest,aes(x=average_placement, y=days_between))+
+  geom_count()+
+  ggtitle("Average Placement Before Race vs. Final Race Placing")+
+  xlab("Days of Rest Between Races")+
+  ylab("Final Placing")
 
+g11
+```
+One of the largest observations we can take away from this visualization is that horses that are placing on the podium (top 3) are mostly getting at least 4+ days of rest. A well rested horse does not mean that it will win, but if a horse placed highly, it does appear it was likely well rested horses.
 
 
 ## Exporting data without outliers/discovered errors
@@ -221,3 +234,5 @@ g10
 write.csv(perf,"../../../data/01-modified-data/perf.clean.no.error.csv",row.names = FALSE)
 ```
 
+# Next Steps
+With this exploratory analysis, we are going to carry these findings right into our Naive Bayes Classification section. Findings from this section will be used and referenced throughout the rest of this project.

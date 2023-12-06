@@ -12,8 +12,7 @@ head(horses,2)
 
 
 We are going to remove "horse_name_zh" which contains the horses' names in Cantonese,
-"horse_url", "owner_url", "sire", "no_of_start_past_10_meetings", "dam","dam_sire", "same_sire and "last_updated". *Note for grader: I will go into more depth why I am removing these in the future*
-completion of this project.
+"horse_url", "owner_url", "sire", "no_of_start_past_10_meetings", "dam","dam_sire", "same_sire and "last_updated" which are all irrelevant to our analysis
 ```{r}
 horses.clean<-horses[,-c(3,4,13,16,19,20,22,23,24,25,26)]
 head(horses.clean,2)

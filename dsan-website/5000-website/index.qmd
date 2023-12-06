@@ -1,9 +1,6 @@
 ---
 title: "Home"
 ---
+This page is going to serve as the future Hub for all my projects I create under this graduate program. For now, I am just using this page as a place holder.
 
-See the following link for more information about the author: [About Me](./about.ipynb)
-
-This page will serve as a page that hosts the executive summary to this project and as a navigation resource.
-
-This is a Quarto website.
+See the following link for more information about me, the author: [About Me](./about.ipynb)
